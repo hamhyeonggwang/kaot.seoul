@@ -42,11 +42,11 @@ export default function JoinPage() {
     }
 
     // 비밀번호 검증
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     if (!formData.password) {
       newErrors.password = '비밀번호를 입력해주세요.'
     } else if (!passwordRegex.test(formData.password)) {
-      newErrors.password = '비밀번호는 8자 이상의 영문과 숫자를 포함해야 합니다.'
+      newErrors.password = '비밀번호는 8자 이상의 영문, 숫자, 특수문자를 포함해야 합니다.'
     }
 
     // 비밀번호 확인 검증
@@ -125,8 +125,8 @@ export default function JoinPage() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
-    // 에러 메시지 제거
-    if (errors[field]) {
+    // 에러 메시지 제거 (비밀번호 필드는 제외)
+    if (errors[field] && field !== 'password' && field !== 'confirmPassword') {
       setErrors(prev => ({ ...prev, [field]: '' }))
     }
   }
@@ -205,7 +205,7 @@ export default function JoinPage() {
                   className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 ${
                     errors.password ? 'border-red-300' : 'border-gray-300'
                   }`}
-                  placeholder="8자 이상 영문+숫자"
+                  placeholder="8자 이상 영문+숫자+특수문자"
                 />
                 <button
                   type="button"
