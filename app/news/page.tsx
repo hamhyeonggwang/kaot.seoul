@@ -154,10 +154,10 @@ export default function NewsPage() {
 
                 {/* Read More Button */}
                 <div className="mt-4">
-                  <button className="flex items-center text-kaot-green-600 hover:text-kaot-green-700 font-medium transition-colors">
+                  <Link href={`/news/${news.id}`} className="flex items-center text-kaot-green-600 hover:text-kaot-green-700 font-medium transition-colors cursor-pointer">
                     자세히 보기
                     <ArrowRight className="h-4 w-4 ml-1" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </article>
