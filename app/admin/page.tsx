@@ -1,441 +1,401 @@
 'use client'
 
-import { useState } from 'react'
-import { 
-  Users, 
-  FileText, 
-  MessageCircle, 
-  BarChart3, 
-  Settings, 
-  Download, 
-  Upload,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  Calendar,
-  TrendingUp,
-  AlertCircle
-} from 'lucide-react'
+import { useState, useEffect } from 'react'
+import Navigation from '@/components/Navigation'
+import Footer from '@/components/Footer'
+import { Plus, Edit, Trash2, Save, X, Eye, Calendar, User, Tag } from 'lucide-react'
 
-export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('dashboard')
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+interface NewsItem {
+  id: number
+  title: string
+  content: string
+  category: string
+  date: string
+  author: string
+  views: number
+  tags: string[]
+}
 
-  // Mock data
-  const stats = [
-    { title: '총 회원수', value: '1,234', change: '+12%', icon: <Users className="h-6 w-6" /> },
-    { title: '오늘 방문자', value: '156', change: '+5%', icon: <Eye className="h-6 w-6" /> },
-    { title: '총 게시글', value: '567', change: '+8%', icon: <FileText className="h-6 w-6" /> },
-    { title: '총 댓글', value: '2,890', change: '+15%', icon: <MessageCircle className="h-6 w-6" /> }
-  ]
+export default function AdminPage() {
+  const [newsData, setNewsData] = useState<NewsItem[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const recentPosts = [
-    { id: 1, title: '2024년 정기총회 안내', author: '관리자', date: '2024-01-15', views: 245 },
-    { id: 2, title: '작업치료 교육 프로그램 신청', author: '교육위원회', date: '2024-01-14', views: 189 },
-    { id: 3, title: '회원 대상 건강검진 실시', author: '복지위원회', date: '2024-01-13', views: 156 }
-  ]
+  // 데이터 로드
+  useEffect(() => {
+    fetchNewsData()
+  }, [])
 
-  const recentComments = [
-    { id: 1, post: '작업치료 기법에 대한 질문', author: '김작업', date: '2024-01-15', content: '좋은 정보 감사합니다!' },
-    { id: 2, post: '교육 프로그램 문의', author: '이치료', date: '2024-01-14', content: '언제 신청 가능한가요?' },
-    { id: 3, post: '자격증 갱신 관련', author: '박교육', date: '2024-01-13', content: '자세한 안내 부탁드립니다.' }
-  ]
-
-  const inquiries = [
-    { id: 1, title: '회원가입 문의', author: '홍길동', date: '2024-01-15', status: '답변완료' },
-    { id: 2, title: '교육 프로그램 일정', author: '김철수', date: '2024-01-14', status: '처리중' },
-    { id: 3, title: '자료 다운로드 오류', author: '이영희', date: '2024-01-13', status: '대기중' }
-  ]
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (username === 'admin' && password === 'admin') {
-      setIsLoggedIn(true)
-    } else {
-      alert('아이디 또는 비밀번호가 올바르지 않습니다.')
+  const fetchNewsData = async () => {
+    try {
+      const response = await fetch('/api/news')
+      const result = await response.json()
+      if (result.success) {
+        setNewsData(result.data)
+      }
+    } catch (error) {
+      console.error('데이터 로드 중 오류:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-kaot-green-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">관리자 로그인</h1>
-            <p className="text-gray-600">관리자 계정으로 로그인하세요</p>
-          </div>
-          
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                아이디
-              </label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-transparent"
-                placeholder="admin"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                비밀번호
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-transparent"
-                placeholder="admin"
-                required
-              />
-            </div>
-            
-            <button
-              type="submit"
-              className="w-full btn-primary py-3"
-            >
-              로그인
-            </button>
-          </form>
-          
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>테스트 계정: admin / admin</p>
-          </div>
-        </div>
-      </div>
-    )
+  const [showForm, setShowForm] = useState(false)
+  const [editingNews, setEditingNews] = useState<NewsItem | null>(null)
+  const [formData, setFormData] = useState<Omit<NewsItem, 'id' | 'views'>>({
+    title: '',
+    content: '',
+    category: '공지사항',
+    date: new Date().toISOString().split('T')[0],
+    author: 'KAOT 서울지부',
+    tags: []
+  })
+  const [tagInput, setTagInput] = useState('')
+
+  const categories = ['공지사항', '지부사업', '교육', '통계', '정책', '국제협력']
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    try {
+      if (editingNews) {
+        // 수정
+        const response = await fetch('/api/news', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: editingNews.id,
+            ...formData
+          })
+        })
+        
+        const result = await response.json()
+        if (result.success) {
+          await fetchNewsData() // 데이터 다시 로드
+          alert('지부소식이 성공적으로 수정되었습니다.')
+        } else {
+          alert('수정 중 오류가 발생했습니다.')
+        }
+      } else {
+        // 새로 추가
+        const response = await fetch('/api/news', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        })
+        
+        const result = await response.json()
+        if (result.success) {
+          await fetchNewsData() // 데이터 다시 로드
+          alert('지부소식이 성공적으로 추가되었습니다.')
+        } else {
+          alert('추가 중 오류가 발생했습니다.')
+        }
+      }
+      
+      resetForm()
+    } catch (error) {
+      console.error('API 호출 중 오류:', error)
+      alert('오류가 발생했습니다.')
+    }
+  }
+
+  const handleEdit = (news: NewsItem) => {
+    setEditingNews(news)
+    setFormData({
+      title: news.title,
+      content: news.content,
+      category: news.category,
+      date: news.date,
+      author: news.author,
+      tags: [...news.tags]
+    })
+    setShowForm(true)
+  }
+
+  const handleDelete = async (id: number) => {
+    if (confirm('정말 삭제하시겠습니까?')) {
+      try {
+        const response = await fetch(`/api/news?id=${id}`, {
+          method: 'DELETE',
+        })
+        
+        const result = await response.json()
+        if (result.success) {
+          await fetchNewsData() // 데이터 다시 로드
+          alert('지부소식이 성공적으로 삭제되었습니다.')
+        } else {
+          alert('삭제 중 오류가 발생했습니다.')
+        }
+      } catch (error) {
+        console.error('삭제 중 오류:', error)
+        alert('오류가 발생했습니다.')
+      }
+    }
+  }
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      content: '',
+      category: '공지사항',
+      date: new Date().toISOString().split('T')[0],
+      author: 'KAOT 서울지부',
+      tags: []
+    })
+    setTagInput('')
+    setEditingNews(null)
+    setShowForm(false)
+  }
+
+  const addTag = () => {
+    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, tagInput.trim()]
+      }))
+      setTagInput('')
+    }
+  }
+
+  const removeTag = (tagToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }))
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <main>
+      <Navigation />
+      
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-semibold text-gray-900">관리자 대시보드</h1>
-            <button
-              onClick={() => setIsLoggedIn(false)}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              로그아웃
-            </button>
-          </div>
+      <section className="bg-kaot-green-600 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl font-bold text-white mb-4">관리자 페이지</h1>
+          <p className="text-xl text-kaot-green-100">지부소식 관리</p>
         </div>
-      </header>
+      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Navigation Tabs */}
-        <div className="flex space-x-1 bg-white rounded-lg p-1 mb-8">
-          {[
-            { id: 'dashboard', name: '대시보드', icon: <BarChart3 className="h-4 w-4" /> },
-            { id: 'posts', name: '게시판 관리', icon: <FileText className="h-4 w-4" /> },
-            { id: 'members', name: '회원 관리', icon: <Users className="h-4 w-4" /> },
-            { id: 'comments', name: '댓글 관리', icon: <MessageCircle className="h-4 w-4" /> },
-            { id: 'inquiries', name: '문의 관리', icon: <AlertCircle className="h-4 w-4" /> },
-            { id: 'backup', name: '백업/복구', icon: <Download className="h-4 w-4" /> },
-            { id: 'settings', name: '설정', icon: <Settings className="h-4 w-4" /> }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-kaot-green-600 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {tab.icon}
-              <span>{tab.name}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Dashboard Content */}
-        {activeTab === 'dashboard' && (
-          <div className="space-y-8">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {stats.map((stat, index) => (
-                <div key={index} className="bg-white rounded-lg shadow p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                      <p className="text-sm text-green-600">{stat.change}</p>
-                    </div>
-                    <div className="text-kaot-green-600">
-                      {stat.icon}
-                    </div>
-                  </div>
-                </div>
-              ))}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Add/Edit Form */}
+        {showForm && (
+          <div className="mb-8 bg-white rounded-lg shadow-lg p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {editingNews ? '지부소식 수정' : '새 지부소식 추가'}
+              </h2>
+              <button
+                onClick={resetForm}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-6 w-6" />
+              </button>
             </div>
 
-            {/* Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Recent Posts */}
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">최근 게시글</h3>
-                <div className="space-y-4">
-                  {recentPosts.map((post) => (
-                    <div key={post.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                      <div>
-                        <p className="font-medium text-gray-900">{post.title}</p>
-                        <p className="text-sm text-gray-600">{post.author} • {post.date}</p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-500">{post.views} 조회</span>
-                        <button className="text-kaot-green-600 hover:text-kaot-green-700">
-                          <Edit className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">제목</label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+                  >
+                    {categories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">날짜</label>
+                  <input
+                    type="date"
+                    value={formData.date}
+                    onChange={(e) => setFormData({...formData, date: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">작성자</label>
+                  <input
+                    type="text"
+                    value={formData.author}
+                    onChange={(e) => setFormData({...formData, author: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+                    required
+                  />
                 </div>
               </div>
 
-              {/* Recent Comments */}
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">최근 댓글</h3>
-                <div className="space-y-4">
-                  {recentComments.map((comment) => (
-                    <div key={comment.id} className="p-3 bg-gray-50 rounded">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="font-medium text-gray-900">{comment.post}</p>
-                        <button className="text-red-600 hover:text-red-700">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                      <p className="text-sm text-gray-600">{comment.content}</p>
-                      <p className="text-xs text-gray-500 mt-1">{comment.author} • {comment.date}</p>
-                    </div>
-                  ))}
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">내용</label>
+                <textarea
+                  value={formData.content}
+                  onChange={(e) => setFormData({...formData, content: e.target.value})}
+                  rows={6}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+                  required
+                />
               </div>
-            </div>
-          </div>
-        )}
 
-        {/* Posts Management */}
-        {activeTab === 'posts' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">게시판 관리</h3>
-              <button className="btn-primary inline-flex items-center">
-                <Plus className="h-4 w-4 mr-2" />
-                새 게시판 생성
-              </button>
-            </div>
-            <div className="space-y-4">
-              {['지부소식', '커뮤니티', '정보마당', '공지사항'].map((board, index) => (
-                <div key={index} className="flex items-center justify-between p-4 border rounded">
-                  <div>
-                    <h4 className="font-medium text-gray-900">{board}</h4>
-                    <p className="text-sm text-gray-600">게시글 24개 • 댓글 156개</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button className="text-kaot-green-600 hover:text-kaot-green-700">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button className="text-red-600 hover:text-red-700">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">태그</label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                    placeholder="태그를 입력하고 Enter"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={addTag}
+                    className="px-4 py-2 bg-kaot-green-600 text-white rounded-lg hover:bg-kaot-green-700"
+                  >
+                    추가
+                  </button>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Members Management */}
-        {activeTab === 'members' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">회원 관리</h3>
-              <button className="btn-primary inline-flex items-center">
-                <Download className="h-4 w-4 mr-2" />
-                회원 명단 다운로드
-              </button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">이름</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">자격번호</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">가입일</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {[
-                    { name: '김작업', license: '12345678', joinDate: '2024-01-15', status: '활성' },
-                    { name: '이치료', license: '87654321', joinDate: '2024-01-14', status: '활성' },
-                    { name: '박교육', license: '11223344', joinDate: '2024-01-13', status: '대기' }
-                  ].map((member, index) => (
-                    <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{member.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.license}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.joinDate}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          member.status === '활성' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {member.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-kaot-green-600 hover:text-kaot-green-900 mr-2">수정</button>
-                        <button className="text-red-600 hover:text-red-900">삭제</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* Comments Management */}
-        {activeTab === 'comments' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">댓글 관리</h3>
-            <div className="space-y-4">
-              {recentComments.map((comment) => (
-                <div key={comment.id} className="border rounded p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="font-medium text-gray-900">{comment.post}</p>
-                      <p className="text-sm text-gray-600">{comment.author} • {comment.date}</p>
-                    </div>
-                    <button className="text-red-600 hover:text-red-700">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <p className="text-gray-700">{comment.content}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Inquiries Management */}
-        {activeTab === 'inquiries' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">문의 관리</h3>
-            <div className="space-y-4">
-              {inquiries.map((inquiry) => (
-                <div key={inquiry.id} className="border rounded p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="font-medium text-gray-900">{inquiry.title}</p>
-                      <p className="text-sm text-gray-600">{inquiry.author} • {inquiry.date}</p>
-                    </div>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      inquiry.status === '답변완료' ? 'bg-green-100 text-green-800' :
-                      inquiry.status === '처리중' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {inquiry.status}
+                <div className="flex flex-wrap gap-2">
+                  {formData.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-kaot-green-100 text-kaot-green-700 rounded-full text-sm flex items-center gap-2"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="text-kaot-green-500 hover:text-kaot-green-700"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
                     </span>
-                  </div>
-                  <div className="flex space-x-2 mt-2">
-                    <button className="text-kaot-green-600 hover:text-kaot-green-700 text-sm">답변하기</button>
-                    <button className="text-red-600 hover:text-red-700 text-sm">삭제</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Backup and Restore */}
-        {activeTab === 'backup' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">백업 및 복구</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="border rounded p-4">
-                <h4 className="font-medium text-gray-900 mb-4">데이터 백업</h4>
-                <div className="space-y-3">
-                  <button className="w-full btn-primary inline-flex items-center justify-center">
-                    <Download className="h-4 w-4 mr-2" />
-                    전체 데이터 백업
-                  </button>
-                  <button className="w-full btn-secondary inline-flex items-center justify-center">
-                    <Download className="h-4 w-4 mr-2" />
-                    회원 데이터 백업
-                  </button>
-                  <button className="w-full btn-secondary inline-flex items-center justify-center">
-                    <Download className="h-4 w-4 mr-2" />
-                    게시글 데이터 백업
-                  </button>
-                </div>
-              </div>
-              <div className="border rounded p-4">
-                <h4 className="font-medium text-gray-900 mb-4">데이터 복구</h4>
-                <div className="space-y-3">
-                  <button className="w-full btn-primary inline-flex items-center justify-center">
-                    <Upload className="h-4 w-4 mr-2" />
-                    백업 파일 업로드
-                  </button>
-                  <p className="text-sm text-gray-600">최근 백업: 2024-01-15 14:30</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Settings */}
-        {activeTab === 'settings' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">시스템 설정</h3>
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-medium text-gray-900 mb-3">카테고리 관리</h4>
-                <div className="space-y-2">
-                  {['공지사항', '교육', '복지', '연구'].map((category, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                      <span>{category}</span>
-                      <div className="flex space-x-2">
-                        <button className="text-kaot-green-600 hover:text-kaot-green-700">
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button className="text-red-600 hover:text-red-700">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
                   ))}
                 </div>
               </div>
-              
-              <div>
-                <h4 className="font-medium text-gray-900 mb-3">시스템 정보</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p><span className="font-medium">서버 상태:</span> 정상</p>
-                    <p><span className="font-medium">데이터베이스:</span> 연결됨</p>
-                  </div>
-                  <div>
-                    <p><span className="font-medium">마지막 업데이트:</span> 2024-01-15</p>
-                    <p><span className="font-medium">버전:</span> 1.0.0</p>
-                  </div>
-                </div>
+
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-kaot-green-600 text-white rounded-lg hover:bg-kaot-green-700 flex items-center"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {editingNews ? '수정' : '추가'}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                >
+                  취소
+                </button>
               </div>
-            </div>
+            </form>
           </div>
         )}
+
+                 {/* News List */}
+         <div className="bg-white rounded-lg shadow-lg">
+           <div className="p-6 border-b border-gray-200">
+             <div className="flex items-center justify-between">
+               <h2 className="text-2xl font-bold text-gray-900">지부소식 목록</h2>
+               <button
+                 onClick={() => setShowForm(true)}
+                 className="px-4 py-2 bg-kaot-green-600 text-white rounded-lg hover:bg-kaot-green-700 flex items-center"
+               >
+                 <Plus className="h-4 w-4 mr-2" />
+                 새 지부소식 추가
+               </button>
+             </div>
+           </div>
+
+           {loading ? (
+             <div className="p-8 text-center">
+               <div className="text-gray-500">데이터를 불러오는 중...</div>
+             </div>
+           ) : (
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">제목</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">카테고리</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">날짜</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">조회수</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {newsData.map((news) => (
+                  <tr key={news.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{news.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{news.title}</div>
+                      <div className="text-sm text-gray-500">{news.author}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        news.category === '공지사항' ? 'bg-red-100 text-red-700' :
+                        news.category === '지부사업' ? 'bg-yellow-100 text-yellow-700' :
+                        news.category === '교육' ? 'bg-blue-100 text-blue-700' :
+                        news.category === '통계' ? 'bg-green-100 text-green-700' :
+                        news.category === '정책' ? 'bg-purple-100 text-purple-700' :
+                        news.category === '국제협력' ? 'bg-orange-100 text-orange-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {news.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{news.date}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{news.views}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleEdit(news)}
+                          className="text-kaot-green-600 hover:text-kaot-green-900"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(news.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                             </tbody>
+             </table>
+           </div>
+           )}
+         </div>
       </div>
-    </div>
+
+      <Footer />
+    </main>
   )
 } 
