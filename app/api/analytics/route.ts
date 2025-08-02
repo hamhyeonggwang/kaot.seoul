@@ -56,17 +56,17 @@ export async function POST(request: NextRequest) {
     visitorData.todayVisitors += 1
     
     // 일별 통계 업데이트
-    if (visitorData.dailyStats[today]) {
-      visitorData.dailyStats[today] += 1
+    if (visitorData.dailyStats[today as keyof typeof visitorData.dailyStats]) {
+      visitorData.dailyStats[today as keyof typeof visitorData.dailyStats] += 1
     } else {
-      visitorData.dailyStats[today] = 1
+      (visitorData.dailyStats as any)[today] = 1
     }
     
     // 페이지별 조회수 증가
-    if (page && visitorData.pageViews[page]) {
-      visitorData.pageViews[page] += 1
+    if (page && visitorData.pageViews[page as keyof typeof visitorData.pageViews]) {
+      visitorData.pageViews[page as keyof typeof visitorData.pageViews] += 1
     } else if (page) {
-      visitorData.pageViews[page] = 1
+      (visitorData.pageViews as any)[page] = 1
     }
     
     // 이번 주, 이번 달 통계 재계산

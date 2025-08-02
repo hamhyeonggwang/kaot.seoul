@@ -28,37 +28,37 @@ export async function GET() {
 
     // 회원 통계 계산
     const totalMembers = membersData.length
-    const activeMembers = membersData.filter(member => member.status === 'active').length
-    const newMembersThisMonth = membersData.filter(member => {
+    const activeMembers = membersData.filter((member: any) => member.status === 'active').length
+    const newMembersThisMonth = membersData.filter((member: any) => {
       const joinDate = new Date(member.joinDate)
       return joinDate.getMonth() === currentMonth && joinDate.getFullYear() === currentYear
     }).length
 
     // 회원 유형별 통계
-    const membershipTypes = membersData.reduce((acc, member) => {
+    const membershipTypes = membersData.reduce((acc: any, member: any) => {
       acc[member.membershipType] = (acc[member.membershipType] || 0) + 1
       return acc
     }, {} as Record<string, number>)
 
     // 전문분야별 통계
-    const specialties = membersData.reduce((acc, member) => {
+    const specialties = membersData.reduce((acc: any, member: any) => {
       acc[member.specialty] = (acc[member.specialty] || 0) + 1
       return acc
     }, {} as Record<string, number>)
 
     // 뉴스 통계 계산
     const totalNews = newsData.length
-    const newsThisMonth = newsData.filter(news => {
+    const newsThisMonth = newsData.filter((news: any) => {
       const newsDate = new Date(news.date)
       return newsDate.getMonth() === currentMonth && newsDate.getFullYear() === currentYear
     }).length
 
     // 조회수 통계 (실제로는 데이터베이스에서 집계해야 함)
-    const totalViews = newsData.reduce((sum, news) => sum + (news.views || 0), 0)
-    const viewsThisMonth = newsData.filter(news => {
+    const totalViews = newsData.reduce((sum: number, news: any) => sum + (news.views || 0), 0)
+    const viewsThisMonth = newsData.filter((news: any) => {
       const newsDate = new Date(news.date)
       return newsDate.getMonth() === currentMonth && newsDate.getFullYear() === currentYear
-    }).reduce((sum, news) => sum + (news.views || 0), 0)
+    }).reduce((sum: number, news: any) => sum + (news.views || 0), 0)
 
     // 월별 통계 (최근 6개월)
     const monthlyStats: Record<string, { members: number; news: number; views: number }> = {}
@@ -66,20 +66,20 @@ export async function GET() {
       const date = new Date(currentYear, currentMonth - i, 1)
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
       
-      const monthMembers = membersData.filter(member => {
+      const monthMembers = membersData.filter((member: any) => {
         const joinDate = new Date(member.joinDate)
         return joinDate.getMonth() === date.getMonth() && joinDate.getFullYear() === date.getFullYear()
       }).length
 
-      const monthNews = newsData.filter(news => {
+      const monthNews = newsData.filter((news: any) => {
         const newsDate = new Date(news.date)
         return newsDate.getMonth() === date.getMonth() && newsDate.getFullYear() === date.getFullYear()
       }).length
 
-      const monthViews = newsData.filter(news => {
+      const monthViews = newsData.filter((news: any) => {
         const newsDate = new Date(news.date)
         return newsDate.getMonth() === date.getMonth() && newsDate.getFullYear() === date.getFullYear()
-      }).reduce((sum, news) => sum + (news.views || 0), 0)
+      }).reduce((sum: number, news: any) => sum + (news.views || 0), 0)
 
       monthlyStats[monthKey] = {
         members: monthMembers,
@@ -89,14 +89,14 @@ export async function GET() {
     }
 
     // 최근 활동 (실제 데이터 기반)
-    const recentActivity = []
+    const recentActivity: Array<{ type: string; message: string; date: string; time: string }> = []
     
     // 최근 회원 가입
     const recentMembers = membersData
-      .sort((a, b) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime())
+      .sort((a: any, b: any) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime())
       .slice(0, 2)
     
-    recentMembers.forEach(member => {
+    recentMembers.forEach((member: any) => {
       recentActivity.push({
         type: 'member_join',
         message: `새 회원 가입: ${member.name}`,
@@ -107,10 +107,10 @@ export async function GET() {
 
     // 최근 뉴스 등록
     const recentNews = newsData
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 2)
     
-    recentNews.forEach(news => {
+    recentNews.forEach((news: any) => {
       recentActivity.push({
         type: 'news_post',
         message: `새 지부소식 등록: ${news.title}`,

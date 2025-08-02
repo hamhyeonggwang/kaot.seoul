@@ -5,8 +5,8 @@ const emailVerificationTokens = new Map<string, { email: string; token: string; 
 
 export const emailUtils = {
   // 이메일 전송기 생성
-  createTransporter: () => {
-    return nodemailer.createTransporter({
+  createTransport: () => {
+    return nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER || 'your-email@gmail.com',
@@ -56,7 +56,7 @@ export const emailUtils = {
   // 이메일 인증 메일 발송
   sendVerificationEmail: async (email: string, name: string, token: string): Promise<boolean> => {
     try {
-      const transporter = emailUtils.createTransporter()
+      const transporter = emailUtils.createTransport()
       
       const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/verify-email?token=${token}`
       
@@ -96,7 +96,7 @@ export const emailUtils = {
   // 비밀번호 재설정 메일 발송
   sendPasswordResetEmail: async (email: string, name: string, token: string): Promise<boolean> => {
     try {
-      const transporter = emailUtils.createTransporter()
+      const transporter = emailUtils.createTransport()
       
       const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/reset-password?token=${token}`
       
