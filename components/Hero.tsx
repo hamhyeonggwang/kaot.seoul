@@ -54,16 +54,8 @@ export default function Hero() {
               </Link>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="flex items-center space-x-6 text-sm text-gray-600">
-              <div className="flex items-center">
-                <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                <span>500+ 회원이 선택한 지부</span>
-              </div>
-              <div className="flex items-center">
-                <Users className="h-4 w-4 text-blue-500 mr-1" />
-                <span>24개 연간 교육 프로그램</span>
-              </div>
+            {/* Band Community Link */}
+            <div className="flex items-center">
               <a
                 href="https://www.band.us/band/82793225/invite"
                 target="_blank"
@@ -131,33 +123,6 @@ export default function Hero() {
                 </div>
               </div>
             </Link>
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <Users className="h-8 w-8 text-kaot-green-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">500+</h3>
-            <p className="text-gray-600">서울지부 회원</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <Calendar className="h-8 w-8 text-kaot-green-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">24</h3>
-            <p className="text-gray-600">연간 교육 프로그램</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <MessageCircle className="h-8 w-8 text-kaot-green-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">50+</h3>
-            <p className="text-gray-600">협력 기관</p>
           </div>
         </div>
       </div>
