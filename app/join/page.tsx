@@ -1,338 +1,379 @@
 'use client'
 
 import { useState } from 'react'
-import { User, Mail, Phone, MapPin, Building, Award, Calendar, FileText, Users, Newspaper, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import Navigation from '@/components/Navigation'
+import Footer from '@/components/Footer'
+import Link from 'next/link'
+import { User, Mail, Phone, FileText, Building, Award, Eye, EyeOff, Check, X } from 'lucide-react'
 
 export default function JoinPage() {
   const [formData, setFormData] = useState({
-    name: '',
-    licenseNumber: '',
     email: '',
+    password: '',
+    confirmPassword: '',
+    name: '',
     phone: '',
-    address: '',
+    licenseNumber: '',
     workplace: '',
-    position: '',
-    experience: '',
-    interests: '',
-    memo: ''
+    specialty: '',
+    membershipType: '준회원'
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [errorMessage, setErrorMessage] = useState('')
+  
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [success, setSuccess] = useState(false)
+  const router = useRouter()
 
-  const benefits = [
-    {
-      icon: <Users className="h-8 w-8" />,
-      title: '전문가 네트워킹',
-      description: '서울 지역 작업치료사들과의 소통과 협력 기회를 통해 전문성을 향상시킬 수 있습니다.'
-    },
-    {
-      icon: <User className="h-8 w-8" />,
-      title: '자조모임 지원',
-      description: '지부 회원 간 자조모임을 통해 경험을 공유하고 서로를 지원합니다.'
-    },
-    {
-      icon: <Newspaper className="h-8 w-8" />,
-      title: '뉴스레터 발송',
-      description: '서울지역 작업치료 이슈 관련 뉴스레터를 정기적으로 발송합니다.'
+  const specialties = ['소아작업치료', '성인재활', '정신건강', '노인재활', '의료재활', '기타']
+  const membershipTypes = ['준회원', '정회원', '학생회원']
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    // 이메일 검증
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!formData.email) {
+      newErrors.email = '이메일을 입력해주세요.'
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = '올바른 이메일 형식을 입력해주세요.'
     }
-  ]
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
+    // 비밀번호 검증
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+    if (!formData.password) {
+      newErrors.password = '비밀번호를 입력해주세요.'
+    } else if (!passwordRegex.test(formData.password)) {
+      newErrors.password = '비밀번호는 8자 이상의 영문과 숫자를 포함해야 합니다.'
+    }
+
+    // 비밀번호 확인 검증
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = '비밀번호 확인을 입력해주세요.'
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.'
+    }
+
+    // 이름 검증
+    if (!formData.name) {
+      newErrors.name = '이름을 입력해주세요.'
+    }
+
+    // 전화번호 검증
+    const phoneRegex = /^01[0-9]-\d{3,4}-\d{4}$/
+    if (!formData.phone) {
+      newErrors.phone = '전화번호를 입력해주세요.'
+    } else if (!phoneRegex.test(formData.phone)) {
+      newErrors.phone = '올바른 전화번호 형식을 입력해주세요. (예: 010-1234-5678)'
+    }
+
+    // 면허번호 검증
+    if (!formData.licenseNumber) {
+      newErrors.licenseNumber = '면허번호를 입력해주세요.'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitStatus('idle')
-    setErrorMessage('')
+    
+    if (!validateForm()) {
+      return
+    }
+
+    setLoading(true)
 
     try {
-      // Google Apps Script API 호출
-      const response = await fetch('/api/members', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          action: 'addMember',
-          data: formData
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          phone: formData.phone,
+          licenseNumber: formData.licenseNumber,
+          workplace: formData.workplace,
+          specialty: formData.specialty,
+          membershipType: formData.membershipType
         })
       })
 
       const result = await response.json()
-
+      
       if (result.success) {
-        setSubmitStatus('success')
-        setFormData({
-          name: '',
-          licenseNumber: '',
-          email: '',
-          phone: '',
-          address: '',
-          workplace: '',
-          position: '',
-          experience: '',
-          interests: '',
-          memo: ''
-        })
+        setSuccess(true)
+        setTimeout(() => {
+          router.push('/login')
+        }, 3000)
       } else {
-        setSubmitStatus('error')
-        setErrorMessage(result.error || '회원가입 중 오류가 발생했습니다.')
+        alert(result.error || '회원가입 중 오류가 발생했습니다.')
       }
     } catch (error) {
-      setSubmitStatus('error')
-      setErrorMessage('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+      console.error('회원가입 중 오류:', error)
+      alert('회원가입 중 오류가 발생했습니다.')
     } finally {
-      setIsSubmitting(false)
+      setLoading(false)
     }
   }
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    // 에러 메시지 제거
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }))
+    }
+  }
+
+  if (success) {
+    return (
+      <main>
+        <Navigation />
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="h-8 w-8 text-green-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">회원가입 완료!</h2>
+            <p className="text-gray-600 mb-6">
+              회원가입이 성공적으로 완료되었습니다. 로그인 페이지로 이동합니다.
+            </p>
+            <Link
+              href="/login"
+              className="inline-block bg-kaot-green-600 text-white px-6 py-2 rounded-lg hover:bg-kaot-green-700"
+            >
+              로그인하기
+            </Link>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-kaot-green-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-kaot-green-50 to-kaot-green-100 py-20">
+    <main>
+      <Navigation />
+      
+      {/* Header */}
+      <section className="bg-kaot-green-600 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            <span className="text-kaot-green-600">서울지부</span> 회원가입
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-700 mb-8">
-            함께 성장하는 서울 작업치료사들의 따뜻한 공간에 참여하세요
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-4">회원가입</h1>
+          <p className="text-xl text-kaot-green-100">서울지부 회원이 되어 다양한 혜택을 누리세요</p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* 회원 혜택 */}
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">회원 혜택</h2>
-            <div className="space-y-6">
-              {benefits.map((benefit, index) => (
-                <div key={index} className="card">
-                  <div className="flex items-start">
-                    <div className="bg-kaot-green-100 w-12 h-12 rounded-lg flex items-center justify-center text-kaot-green-600 mr-4">
-                      {benefit.icon}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">{benefit.title}</h3>
-                      <p className="text-gray-600">{benefit.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                이메일 <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 ${
+                    errors.email ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="example@email.com"
+                />
+              </div>
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
-          </div>
 
-          {/* 회원가입 폼 */}
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">회원가입</h2>
-            
-            {submitStatus === 'success' && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md mb-6">
-                회원가입이 성공적으로 완료되었습니다! 승인 후 로그인이 가능합니다.
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                비밀번호 <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Eye className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 ${
+                    errors.password ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="8자 이상 영문+숫자"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-            )}
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            </div>
 
-            {submitStatus === 'error' && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
-                {errorMessage}
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                비밀번호 확인 <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Eye className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 ${
+                    errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="비밀번호 재입력"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-            )}
+              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* 기본 정보 */}
-              <div className="card">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">기본 정보</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                      이름 *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="licenseNumber" className="block text-sm font-medium text-gray-700 mb-2">
-                      자격번호 *
-                    </label>
-                    <input
-                      type="text"
-                      id="licenseNumber"
-                      name="licenseNumber"
-                      required
-                      value={formData.licenseNumber}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                    />
-                  </div>
-                </div>
+            {/* Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                이름 <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 ${
+                    errors.name ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="실명을 입력하세요"
+                />
               </div>
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+            </div>
 
-              {/* 연락처 정보 */}
-              <div className="card">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">연락처 정보</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      이메일 *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                      전화번호 *
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                      주소
-                    </label>
-                    <input
-                      type="text"
-                      id="address"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                    />
-                  </div>
-                </div>
+            {/* Phone */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                전화번호 <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 ${
+                    errors.phone ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="010-1234-5678"
+                />
               </div>
+              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+            </div>
 
-              {/* 근무 정보 */}
-              <div className="card">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">근무 정보</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="workplace" className="block text-sm font-medium text-gray-700 mb-2">
-                      근무기관
-                    </label>
-                    <input
-                      type="text"
-                      id="workplace"
-                      name="workplace"
-                      value={formData.workplace}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-2">
-                      직책
-                    </label>
-                    <input
-                      type="text"
-                      id="position"
-                      name="position"
-                      value={formData.position}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                    />
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-2">
-                    경력 (년)
-                  </label>
-                  <input
-                    type="number"
-                    id="experience"
-                    name="experience"
-                    min="0"
-                    value={formData.experience}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                  />
-                </div>
+            {/* License Number */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                면허번호 <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={formData.licenseNumber}
+                  onChange={(e) => handleInputChange('licenseNumber', e.target.value)}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 ${
+                    errors.licenseNumber ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="작업치료사 면허번호"
+                />
               </div>
+              {errors.licenseNumber && <p className="text-red-500 text-sm mt-1">{errors.licenseNumber}</p>}
+            </div>
 
-              {/* 관심분야 및 메모 */}
-              <div className="card">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">추가 정보</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="interests" className="block text-sm font-medium text-gray-700 mb-2">
-                      관심분야
-                    </label>
-                    <textarea
-                      id="interests"
-                      name="interests"
-                      rows={3}
-                      value={formData.interests}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                      placeholder="예: 소아 작업치료, 뇌졸중 재활, 정신건강 등"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="memo" className="block text-sm font-medium text-gray-700 mb-2">
-                      메모
-                    </label>
-                    <textarea
-                      id="memo"
-                      name="memo"
-                      rows={3}
-                      value={formData.memo}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                      placeholder="추가로 전달하고 싶은 내용이 있으시면 작성해주세요"
-                    />
-                  </div>
-                </div>
+            {/* Workplace */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">근무지</label>
+              <div className="relative">
+                <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={formData.workplace}
+                  onChange={(e) => handleInputChange('workplace', e.target.value)}
+                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+                  placeholder="소속 기관명"
+                />
               </div>
+            </div>
 
-              {/* 제출 버튼 */}
+            {/* Specialty */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">전문분야</label>
+              <select
+                value={formData.specialty}
+                onChange={(e) => handleInputChange('specialty', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+              >
+                <option value="">전문분야 선택</option>
+                {specialties.map(specialty => (
+                  <option key={specialty} value={specialty}>{specialty}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Membership Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">회원 유형</label>
+              <select
+                value={formData.membershipType}
+                onChange={(e) => handleInputChange('membershipType', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:border-kaot-green-500"
+              >
+                {membershipTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-6">
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-kaot-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-kaot-green-700 focus:outline-none focus:ring-2 focus:ring-kaot-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center"
+                disabled={loading}
+                className="w-full bg-kaot-green-600 text-white py-3 px-4 rounded-lg hover:bg-kaot-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    처리 중...
-                  </>
-                ) : (
-                  <>
-                    회원가입 완료
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </>
-                )}
+                {loading ? '가입 중...' : '회원가입'}
               </button>
-            </form>
-          </div>
+            </div>
+
+            {/* Login Link */}
+            <div className="text-center">
+              <p className="text-gray-600">
+                이미 계정이 있으신가요?{' '}
+                <Link href="/login" className="text-kaot-green-600 hover:text-kaot-green-700 font-medium">
+                  로그인하기
+                </Link>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
-    </div>
+
+      <Footer />
+    </main>
   )
 } 

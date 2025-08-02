@@ -1,12 +1,48 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Instagram, Play, LogIn, User, Settings } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Menu, X, Instagram, Play, LogIn, User, Settings, LogOut } from 'lucide-react'
+import { auth } from '@/app/utils/auth'
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    // 클라이언트 사이드에서 로그인 상태 확인
+    const checkAuthStatus = () => {
+      const loggedIn = auth.isLoggedIn()
+      const currentUser = auth.getUser()
+      
+      setIsLoggedIn(loggedIn)
+      setUser(currentUser)
+    }
+
+    checkAuthStatus()
+    
+    // 로그인 상태 변경 감지를 위한 이벤트 리스너
+    window.addEventListener('storage', checkAuthStatus)
+    return () => window.removeEventListener('storage', checkAuthStatus)
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      auth.logout()
+      setIsLoggedIn(false)
+      setUser(null)
+      setIsUserMenuOpen(false)
+      router.push('/')
+    } catch (error) {
+      console.error('로그아웃 중 오류:', error)
+    }
+  }
 
   const menuItems = [
     { name: '홈', href: '/' },
@@ -14,7 +50,7 @@ export default function Navigation() {
     { name: '커뮤니티', href: '/community' },
     { name: '협력기관', href: '/partners' },
     { name: '정보마당', href: '/info' },
-    { name: '회원가입', href: '/join' },
+    ...(isLoggedIn ? [] : [{ name: '회원가입', href: '/join' }]),
   ]
 
   return (
@@ -73,21 +109,61 @@ export default function Navigation() {
               </a>
             </div>
 
-            {/* Login Buttons */}
+            {/* Login/User Buttons */}
             <div className="hidden md:flex items-center space-x-3">
-              {/* Member Login */}
-              <Link
-                href="/login"
-                className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
-              >
-                <User className="h-5 w-5" />
-                <span className="ml-1 text-sm font-medium">로그인</span>
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  {/* User Menu */}
+                  <div className="relative">
+                    <button
+                      onClick={() => {
+                        setIsUserMenuOpen(!isUserMenuOpen)
+                        setIsAdminMenuOpen(false)
+                      }}
+                      className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
+                    >
+                      <User className="h-5 w-5" />
+                      <span className="ml-1 text-sm font-medium">{user?.name || '회원'}</span>
+                    </button>
+                    
+                    {isUserMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-200">
+                          {user?.email}
+                        </div>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <div className="flex items-center">
+                            <LogOut className="h-4 w-4 mr-2" />
+                            로그아웃
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Member Login */}
+                  <Link
+                    href="/login"
+                    className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
+                  >
+                    <User className="h-5 w-5" />
+                    <span className="ml-1 text-sm font-medium">로그인</span>
+                  </Link>
+                </>
+              )}
 
               {/* Admin Menu */}
               <div className="relative">
                 <button
-                  onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                  onClick={() => {
+                    setIsAdminMenuOpen(!isAdminMenuOpen)
+                    setIsUserMenuOpen(false)
+                  }}
                   className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
                 >
                   <Settings className="h-5 w-5" />
@@ -164,17 +240,41 @@ export default function Navigation() {
                   <span>@kaot.seoul</span>
                 </div>
               </a>
-              {/* Login in Mobile Menu */}
-              <Link
-                href="/login"
-                className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center">
-                  <User className="h-5 w-5 mr-2" />
-                  <span>로그인</span>
-                </div>
-              </Link>
+              
+              {/* Login/User in Mobile Menu */}
+              {isLoggedIn ? (
+                <>
+                  <div className="border-t border-gray-200 pt-2 mt-2">
+                    <div className="px-3 py-2 text-xs text-gray-500">
+                      {user?.email}
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleLogout()
+                        setIsMenuOpen(false)
+                      }}
+                      className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 w-full text-left"
+                    >
+                      <div className="flex items-center">
+                        <LogOut className="h-5 w-5 mr-2" />
+                        <span>로그아웃</span>
+                      </div>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className="flex items-center">
+                    <User className="h-5 w-5 mr-2" />
+                    <span>로그인</span>
+                  </div>
+                </Link>
+              )}
+              
               <Link
                 href="/admin"
                 className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"

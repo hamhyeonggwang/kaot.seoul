@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 
@@ -10,22 +11,36 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
 
-    // TODO: 실제 로그인 API 연동
     try {
-      // 임시 로그인 로직 (테스트용)
-      if (email === 'test@example.com' && password === 'password') {
-        // 로그인 성공 시 홈페이지로 리다이렉트
-        window.location.href = '/'
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        // 로그인 성공 시 세션 저장
+        localStorage.setItem('user', JSON.stringify(result.data))
+        localStorage.setItem('isLoggedIn', 'true')
+        
+        // 홈페이지로 리다이렉트
+        router.push('/')
       } else {
-        setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+        setError(result.error || '로그인에 실패했습니다.')
       }
     } catch (err) {
+      console.error('로그인 중 오류:', err)
       setError('로그인 중 오류가 발생했습니다.')
     } finally {
       setIsLoading(false)
