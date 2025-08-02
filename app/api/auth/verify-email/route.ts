@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { emailUtils } from '@/app/utils/email'
 
+// 동적 라우트로 설정
+export const dynamic = 'force-dynamic'
+
 // 실제로는 데이터베이스에서 관리해야 하지만, 여기서는 메모리 기반으로 구현
 let usersData = [
   {
@@ -37,8 +40,7 @@ let usersData = [
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const token = searchParams.get('token')
+    const token = request.nextUrl.searchParams.get('token')
 
     if (!token) {
       return NextResponse.json({ 
