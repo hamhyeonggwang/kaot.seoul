@@ -193,30 +193,30 @@ export default function YouTubePage() {
       {/* YouTube Channel Info */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">서울지부 유튜브 채널</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">유튜브 채널</h2>
           <p className="text-lg text-gray-600 mb-8">
-            서울지부의 공식 유튜브 채널에서 작업치료 관련 교육 영상, 지부 활동 소식, 
+            대한작업치료사협회와 서울지부의 유튜브 채널에서 작업치료 관련 교육 영상, 지부 활동 소식, 
             임상 사례 등을 확인하실 수 있습니다. 정기적으로 업로드되는 영상들을 통해 
             전문성을 향상시키고 최신 정보를 얻어보세요.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="https://www.youtube.com/@kaotseoul"
+              href="https://www.youtube.com/@kaot-ot-ati"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary inline-flex items-center"
             >
               <Play className="h-5 w-5 mr-2" />
-              유튜브 채널 구독하기
+              대한작업치료사협회 유튜브
             </a>
             <a
-              href="https://www.instagram.com/kaot.seoul"
+              href="https://www.youtube.com/@kaotseoul"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary inline-flex items-center"
             >
-              <ExternalLink className="h-5 w-5 mr-2" />
-              인스타그램 팔로우
+              <Play className="h-5 w-5 mr-2" />
+              서울지부 유튜브 채널
             </a>
           </div>
         </div>
