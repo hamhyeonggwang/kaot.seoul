@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Mail, Phone, MapPin, ExternalLink, Instagram } from 'lucide-react'
+import { Mail, ExternalLink, Instagram } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -23,16 +23,8 @@ export default function Footer() {
             </p>
             <div className="space-y-2">
               <div className="flex items-center text-gray-300">
-                <MapPin className="h-4 w-4 mr-2" />
-                <span>서울특별시 강남구 테헤란로 123</span>
-              </div>
-              <div className="flex items-center text-gray-300">
-                <Phone className="h-4 w-4 mr-2" />
-                <span>02-1234-5678</span>
-              </div>
-              <div className="flex items-center text-gray-300">
                 <Mail className="h-4 w-4 mr-2" />
-                <span>seoul@kaot.or.kr</span>
+                <span>kaot.seoul@gmail.com</span>
               </div>
               <div className="flex items-center text-gray-300">
                 <Instagram className="h-4 w-4 mr-2" />
@@ -124,9 +116,6 @@ export default function Footer() {
           <div className="flex space-x-4 mt-4 md:mt-0">
             <Link href="/privacy" className="text-gray-400 hover:text-kaot-green-400 text-sm transition-colors">
               개인정보처리방침
-            </Link>
-            <Link href="/terms" className="text-gray-400 hover:text-kaot-green-400 text-sm transition-colors">
-              이용약관
             </Link>
           </div>
         </div>

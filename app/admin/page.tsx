@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
-import { Plus, Edit, Trash2, Save, X, Eye, Calendar, User, Tag } from 'lucide-react'
+import { Plus, Edit, Trash2, Save, X, Eye, Calendar, User, Tag, BarChart3, Users, Newspaper, LogOut } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 interface NewsItem {
   id: number
@@ -19,6 +20,21 @@ interface NewsItem {
 export default function AdminPage() {
   const [newsData, setNewsData] = useState<NewsItem[]>([])
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  // 인증 체크
+  useEffect(() => {
+    const adminSession = localStorage.getItem('adminSession')
+    if (!adminSession) {
+      router.push('/admin/login')
+    }
+  }, [router])
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminSession')
+    localStorage.removeItem('adminUser')
+    router.push('/admin/login')
+  }
 
   // 데이터 로드
   useEffect(() => {
@@ -175,10 +191,62 @@ export default function AdminPage() {
       {/* Header */}
       <section className="bg-kaot-green-600 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">관리자 페이지</h1>
-          <p className="text-xl text-kaot-green-100">지부소식 관리</p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-4">관리자 페이지</h1>
+              <p className="text-xl text-kaot-green-100">지부소식 관리</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-white text-kaot-green-600 rounded-lg hover:bg-gray-100 flex items-center"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              로그아웃
+            </button>
+          </div>
         </div>
       </section>
+
+      {/* Admin Navigation */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <a href="/admin/dashboard" className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-kaot-green-100">
+                <BarChart3 className="h-6 w-6 text-kaot-green-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-gray-900">대시보드</h3>
+                <p className="text-sm text-gray-600">통계 및 현황 확인</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="/admin/members" className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-blue-100">
+                <Users className="h-6 w-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-gray-900">회원 관리</h3>
+                <p className="text-sm text-gray-600">회원 정보 관리</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="/admin" className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-yellow-100">
+                <Newspaper className="h-6 w-6 text-yellow-600" />
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-gray-900">지부소식 관리</h3>
+                <p className="text-sm text-gray-600">뉴스 및 공지사항 관리</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Add/Edit Form */}

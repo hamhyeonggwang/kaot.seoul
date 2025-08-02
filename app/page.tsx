@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import Navigation from '@/components/Navigation'
 import Hero from '@/components/Hero'
@@ -23,7 +25,26 @@ export default function Home() {
 
   useEffect(() => {
     fetchRecentNews()
+    // 방문자 수 추적
+    trackVisitor()
   }, [])
+
+  const trackVisitor = async () => {
+    try {
+      await fetch('/api/analytics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          page: '/',
+          timestamp: new Date().toISOString()
+        })
+      })
+    } catch (error) {
+      console.error('방문자 추적 중 오류:', error)
+    }
+  }
 
   const fetchRecentNews = async () => {
     try {
