@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import Navigation from '@/components/Navigation'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: '대한작업치료사협회 서울지부',
@@ -14,7 +16,11 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="bg-kaot-green-50 min-h-screen">
-        {children}
+        <Navigation />
+        <main>
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   )

@@ -1,5 +1,3 @@
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
 import Link from 'next/link'
 import { ExternalLink, Building, Globe, Phone, Mail } from 'lucide-react'
 
@@ -20,9 +18,7 @@ export default function PartnersPage() {
   const categories = ['전체', '전국협회']
 
   return (
-    <main>
-      <Navigation />
-      
+    <>
       {/* Header */}
       <section className="bg-kaot-green-600 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -125,8 +121,6 @@ export default function PartnersPage() {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </main>
+    </>
   )
 } 

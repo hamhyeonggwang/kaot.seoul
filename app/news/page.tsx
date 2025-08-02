@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Calendar, User, Tag, ArrowRight, Search, Filter } from 'lucide-react'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
 
 export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState('전체')
@@ -64,9 +62,7 @@ export default function NewsPage() {
   })
 
   return (
-    <main>
-      <Navigation />
-      
+    <>
       {/* Header */}
       <section className="bg-gradient-to-r from-kaot-green-600 to-kaot-green-700 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -194,8 +190,6 @@ export default function NewsPage() {
           </div>
         )}
       </div>
-
-      <Footer />
-    </main>
+    </>
   )
 } 

@@ -1,8 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
 import Link from 'next/link'
 import { Plus, Search, MessageCircle, Eye, Heart, Calendar, User, Tag } from 'lucide-react'
 
@@ -91,9 +89,7 @@ export default function CommunityPage() {
   }
 
   return (
-    <main>
-      <Navigation />
-      
+    <>
       {/* Header */}
       <section className="bg-kaot-green-600 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -213,8 +209,6 @@ export default function CommunityPage() {
           )}
         </div>
       </div>
-
-      <Footer />
-    </main>
+    </>
   )
 } 
