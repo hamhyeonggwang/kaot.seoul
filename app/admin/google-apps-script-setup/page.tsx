@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { ArrowLeft, Copy, Check, ExternalLink, Database, Settings, Code, Deploy, TestTube } from 'lucide-react'
+import { ArrowLeft, Copy, Check, ExternalLink, Database, Settings, Code, Upload, TestTube } from 'lucide-react'
 import Link from 'next/link'
 
 export default function GoogleAppsScriptSetupPage() {
@@ -281,7 +281,7 @@ function addMember(memberData) {
               rel="noopener noreferrer"
               className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-kaot-green-300 hover:bg-kaot-green-50 transition-colors"
             >
-              <Deploy className="h-6 w-6 text-kaot-green-600 mr-3" />
+              <Upload className="h-6 w-6 text-kaot-green-600 mr-3" />
               <div>
                 <p className="font-medium text-gray-900">개발자 문서</p>
                 <p className="text-sm text-gray-600">Google Apps Script 가이드</p>
