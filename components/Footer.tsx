@@ -73,7 +73,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a 
-                  href="https://www.kaot.or.kr" 
+                  href="http://kaot.org" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-kaot-green-400 transition-colors flex items-center"

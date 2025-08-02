@@ -34,8 +34,12 @@ export default function LoginPage() {
         localStorage.setItem('user', JSON.stringify(result.data))
         localStorage.setItem('isLoggedIn', 'true')
         
-        // 홈페이지로 리다이렉트
-        router.push('/')
+        // 관리자인 경우 관리자 페이지로, 일반 사용자는 홈페이지로 리다이렉트
+        if (result.data.role === 'admin') {
+          router.push('/admin')
+        } else {
+          router.push('/')
+        }
       } else {
         setError(result.error || '로그인에 실패했습니다.')
       }
@@ -196,8 +200,12 @@ export default function LoginPage() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="text-sm font-medium text-blue-800 mb-2">테스트 계정</h3>
           <p className="text-xs text-blue-700">
-            이메일: test@example.com<br />
-            비밀번호: password
+            <strong>일반 회원:</strong><br />
+            이메일: kim@example.com<br />
+            비밀번호: password123<br /><br />
+            <strong>관리자:</strong><br />
+            이메일: admin@kaot-seoul.or.kr<br />
+            비밀번호: admin123
           </p>
         </div>
       </div>

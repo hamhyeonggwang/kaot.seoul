@@ -9,7 +9,6 @@ import { auth } from '@/app/utils/auth'
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState<any>(null)
   const router = useRouter()
@@ -127,7 +126,6 @@ export default function Navigation() {
                     <button
                       onClick={() => {
                         setIsUserMenuOpen(!isUserMenuOpen)
-                        setIsAdminMenuOpen(false)
                       }}
                       className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
                     >
@@ -166,34 +164,7 @@ export default function Navigation() {
                 </>
               )}
 
-              {/* Admin Menu */}
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    setIsAdminMenuOpen(!isAdminMenuOpen)
-                    setIsUserMenuOpen(false)
-                  }}
-                  className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
-                >
-                  <Settings className="h-5 w-5" />
-                  <span className="ml-1 text-sm font-medium">관리자</span>
-                </button>
-                
-                {isAdminMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                    <Link
-                      href="/admin"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsAdminMenuOpen(false)}
-                    >
-                      <div className="flex items-center">
-                        <LogIn className="h-4 w-4 mr-2" />
-                        관리자 로그인
-                      </div>
-                    </Link>
-                  </div>
-                )}
-              </div>
+
             </div>
             
             {/* Mobile menu button */}
@@ -296,16 +267,7 @@ export default function Navigation() {
                 </Link>
               )}
               
-              <Link
-                href="/admin"
-                className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center">
-                  <LogIn className="h-5 w-5 mr-2" />
-                  <span>관리자</span>
-                </div>
-              </Link>
+
             </div>
           </div>
         </div>

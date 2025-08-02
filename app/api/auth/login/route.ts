@@ -17,7 +17,8 @@ let usersData = [
     status: 'active',
     emailVerified: true,
     createdAt: '2024-01-15T10:00:00Z',
-    lastLogin: '2025-01-20T10:30:00Z'
+    lastLogin: '2025-01-20T10:30:00Z',
+    role: 'member'
   },
   {
     id: 2,
@@ -33,7 +34,25 @@ let usersData = [
     status: 'active',
     emailVerified: true,
     createdAt: '2024-02-20T14:30:00Z',
-    lastLogin: '2025-01-19T16:45:00Z'
+    lastLogin: '2025-01-19T16:45:00Z',
+    role: 'member'
+  },
+  {
+    id: 3,
+    email: 'admin@kaot-seoul.or.kr',
+    password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqKqKq', // hashed_admin123
+    name: '관리자',
+    phone: '010-0000-0000',
+    licenseNumber: 'OT-ADMIN-001',
+    workplace: '대한작업치료사협회 서울지부',
+    specialty: '관리',
+    membershipType: '관리자',
+    joinDate: '2024-01-01',
+    status: 'active',
+    emailVerified: true,
+    createdAt: '2024-01-01T00:00:00Z',
+    lastLogin: '2025-01-20T10:30:00Z',
+    role: 'admin'
   }
 ]
 
@@ -99,7 +118,8 @@ export async function POST(request: NextRequest) {
       membershipType: user.membershipType,
       joinDate: user.joinDate,
       emailVerified: user.emailVerified,
-      lastLogin: user.lastLogin
+      lastLogin: user.lastLogin,
+      role: user.role || 'member'
     }
 
     return NextResponse.json({ 
