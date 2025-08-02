@@ -8,8 +8,8 @@ export default function PartnersPage() {
       name: '대한작업치료사협회',
       description: '전국 작업치료사들의 대표 조직',
       website: 'http://kaot.org',
-      phone: '02-1234-5678',
-      email: 'info@kaot.or.kr',
+      phone: '02-3672-0616',
+      email: 'kaotoffice@kaot.org',
       category: '전국협회',
       logo: 'KAOT'
     }

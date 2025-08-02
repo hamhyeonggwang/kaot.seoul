@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Instagram, Play, MessageCircle, ExternalLink, Users, Calendar, Heart, Star } from 'lucide-react'
+import { Instagram, Play, MessageCircle, ExternalLink } from 'lucide-react'
 
 export default function CommunityPage() {
   const socialPlatforms = [
@@ -13,7 +13,6 @@ export default function CommunityPage() {
       url: 'https://www.instagram.com/kaot.seoul',
       color: 'bg-gradient-to-r from-pink-500 to-purple-600',
       features: ['일상 사진', '활동 소식', '회원 소통'],
-      followers: '1,200+',
       posts: '500+'
     },
     {
@@ -21,11 +20,11 @@ export default function CommunityPage() {
       name: 'YouTube',
       description: '작업치료 관련 교육 영상과 지부 활동 영상을 시청하세요',
       icon: <Play className="h-8 w-8" />,
-      url: 'https://www.youtube.com/@kaotseoul',
+      url: '#',
       color: 'bg-gradient-to-r from-red-500 to-red-700',
       features: ['교육 영상', '세미나 하이라이트', '전문가 인터뷰'],
-      followers: '2,500+',
-      posts: '100+'
+      posts: '개설 예정',
+      comingSoon: true
     },
     {
       id: 3,
@@ -35,33 +34,11 @@ export default function CommunityPage() {
       url: 'https://www.band.us/band/82793225/invite',
       color: 'bg-gradient-to-r from-green-500 to-green-700',
       features: ['실시간 채팅', '정보 공유', '회원 전용'],
-      followers: '800+',
       posts: '1,000+'
     }
   ]
 
-  const communityStats = [
-    {
-      icon: <Users className="h-6 w-6" />,
-      label: '총 회원 수',
-      value: '500+'
-    },
-    {
-      icon: <Calendar className="h-6 w-6" />,
-      label: '월간 활동',
-      value: '50+'
-    },
-    {
-      icon: <Heart className="h-6 w-6" />,
-      label: '상호작용',
-      value: '1,200+'
-    },
-    {
-      icon: <Star className="h-6 w-6" />,
-      label: '만족도',
-      value: '98%'
-    }
-  ]
+
 
   return (
     <>
@@ -73,22 +50,7 @@ export default function CommunityPage() {
         </div>
       </section>
 
-      {/* Community Stats */}
-      <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {communityStats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="bg-kaot-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-kaot-green-600">
-                  {stat.icon}
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-                <p className="text-gray-600">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Social Media Platforms */}
       <section className="py-16 bg-kaot-green-50">
@@ -110,10 +72,12 @@ export default function CommunityPage() {
                       </div>
                       <div>
                         <h3 className="text-xl font-bold">{platform.name}</h3>
-                        <p className="text-sm opacity-90">{platform.followers} 팔로워</p>
+                        {platform.comingSoon && (
+                          <p className="text-sm opacity-90 bg-white bg-opacity-20 px-2 py-1 rounded">개설 예정</p>
+                        )}
                       </div>
                     </div>
-                    <ExternalLink className="h-5 w-5 opacity-80" />
+                    {!platform.comingSoon && <ExternalLink className="h-5 w-5 opacity-80" />}
                   </div>
                   <p className="text-sm opacity-90">{platform.description}</p>
                 </div>
@@ -137,14 +101,23 @@ export default function CommunityPage() {
                     <span>활성 커뮤니티</span>
                   </div>
                   
-                  <a
-                    href={platform.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full bg-kaot-green-600 hover:bg-kaot-green-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors duration-200"
-                  >
-                    {platform.name} 바로가기
-                  </a>
+                  {platform.comingSoon ? (
+                    <button
+                      disabled
+                      className="block w-full bg-gray-400 text-white text-center py-3 px-4 rounded-lg font-medium cursor-not-allowed"
+                    >
+                      개설 예정
+                    </button>
+                  ) : (
+                    <a
+                      href={platform.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full bg-kaot-green-600 hover:bg-kaot-green-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors duration-200"
+                    >
+                      {platform.name} 바로가기
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -193,7 +166,7 @@ export default function CommunityPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
-              href="mailto:community@kaot.seoul" 
+              href="mailto:kaot.seoul@gmail.com" 
               className="bg-white text-kaot-green-600 hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-colors duration-200"
             >
               이메일 문의

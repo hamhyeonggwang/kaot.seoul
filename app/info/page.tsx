@@ -89,7 +89,8 @@ export default function InfoPage() {
       title: '교육 프로그램',
       description: '정기 교육 프로그램 및 세미나 정보',
       icon: <BookOpen className="h-8 w-8" />,
-      href: '/info/education'
+      href: 'https://kaot.org/offline/offline_list.jsp',
+      external: true
     },
     {
       title: '연구자료',
