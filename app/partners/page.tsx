@@ -9,125 +9,15 @@ export default function PartnersPage() {
       id: 1,
       name: '대한작업치료사협회',
       description: '전국 작업치료사들의 대표 조직',
-      website: 'https://www.kaot.or.kr',
+      website: 'http://kaot.org',
       phone: '02-1234-5678',
       email: 'info@kaot.or.kr',
       category: '전국협회',
       logo: 'KAOT'
-    },
-    {
-      id: 2,
-      name: '보건복지부',
-      description: '국가 보건의료 정책 수립 및 관리',
-      website: 'https://www.mohw.go.kr',
-      phone: '02-2023-7000',
-      email: 'webmaster@mohw.go.kr',
-      category: '정부기관',
-      logo: 'MOHW'
-    },
-    {
-      id: 3,
-      name: '서울특별시청',
-      description: '서울시 보건의료 정책 및 서비스',
-      website: 'https://www.seoul.go.kr',
-      phone: '02-120',
-      email: 'webmaster@seoul.go.kr',
-      category: '지방정부',
-      logo: 'SEOUL'
-    },
-    {
-      id: 4,
-      name: '서울대학교병원',
-      description: '국내 최고 수준의 의료 서비스 제공',
-      website: 'https://www.snuh.org',
-      phone: '02-2072-0505',
-      email: 'webmaster@snuh.org',
-      category: '의료기관',
-      logo: 'SNUH'
-    },
-    {
-      id: 5,
-      name: '연세대학교병원',
-      description: '최신 의료기술과 치료 서비스 제공',
-      website: 'https://www.yuhs.or.kr',
-      phone: '02-2228-5800',
-      email: 'webmaster@yuhs.or.kr',
-      category: '의료기관',
-      logo: 'YUHS'
-    },
-    {
-      id: 6,
-      name: '고려대학교병원',
-      description: '고품질 의료 서비스와 연구 활동',
-      website: 'https://www.kumc.or.kr',
-      phone: '02-2626-1114',
-      email: 'webmaster@kumc.or.kr',
-      category: '의료기관',
-      logo: 'KUMC'
-    },
-    {
-      id: 7,
-      name: '서울아산병원',
-      description: '최첨단 의료기술과 환자 중심 치료',
-      website: 'https://www.amc.seoul.kr',
-      phone: '02-3010-5000',
-      email: 'webmaster@amc.seoul.kr',
-      category: '의료기관',
-      logo: 'AMC'
-    },
-    {
-      id: 8,
-      name: '삼성서울병원',
-      description: '세계적 수준의 의료 서비스 제공',
-      website: 'https://www.samsunghospital.com',
-      phone: '02-3410-2114',
-      email: 'webmaster@samsunghospital.com',
-      category: '의료기관',
-      logo: 'SSH'
-    },
-    {
-      id: 9,
-      name: '서울대학교 작업치료학과',
-      description: '작업치료 전문가 양성 및 연구',
-      website: 'https://ot.snu.ac.kr',
-      phone: '02-880-1234',
-      email: 'ot@snu.ac.kr',
-      category: '교육기관',
-      logo: 'SNU'
-    },
-    {
-      id: 10,
-      name: '연세대학교 작업치료학과',
-      description: '작업치료 교육 및 연구 활동',
-      website: 'https://ot.yonsei.ac.kr',
-      phone: '02-2123-5678',
-      email: 'ot@yonsei.ac.kr',
-      category: '교육기관',
-      logo: 'YONSEI'
-    },
-    {
-      id: 11,
-      name: '고려대학교 작업치료학과',
-      description: '작업치료 전문가 교육',
-      website: 'https://ot.korea.ac.kr',
-      phone: '02-3290-1234',
-      email: 'ot@korea.ac.kr',
-      category: '교육기관',
-      logo: 'KOREA'
-    },
-    {
-      id: 12,
-      name: '한국보건의료연구원',
-      description: '보건의료 정책 연구 및 개발',
-      website: 'https://www.nhimc.or.kr',
-      phone: '02-2188-7000',
-      email: 'webmaster@nhimc.or.kr',
-      category: '연구기관',
-      logo: 'NHIMC'
     }
   ]
 
-  const categories = ['전체', '전국협회', '정부기관', '지방정부', '의료기관', '교육기관', '연구기관']
+  const categories = ['전체', '전국협회']
 
   return (
     <main>
@@ -137,7 +27,7 @@ export default function PartnersPage() {
       <section className="bg-kaot-green-600 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-bold text-white mb-4">협력기관</h1>
-          <p className="text-xl text-kaot-green-100">서울지부와 협력하는 다양한 기관들을 소개합니다</p>
+          <p className="text-xl text-kaot-green-100">서울지부와 협력하는 기관을 소개합니다</p>
         </div>
       </section>
 
@@ -203,32 +93,16 @@ export default function PartnersPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">협력 관계</h2>
-            <p className="text-lg text-gray-600">서울지부는 다양한 기관과 협력하여 더 나은 서비스를 제공합니다</p>
+            <p className="text-lg text-gray-600">서울지부는 대한작업치료사협회와 협력하여 더 나은 서비스를 제공합니다</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-8 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Building className="h-8 w-8 text-kaot-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">의료기관 협력</h3>
-              <p className="text-gray-600">서울 지역 주요 병원들과 협력하여 최고 수준의 치료 서비스를 제공합니다.</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Globe className="h-8 w-8 text-kaot-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">교육기관 협력</h3>
-              <p className="text-gray-600">대학과 연구기관과 협력하여 전문성 향상과 연구 활동을 지원합니다.</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Phone className="h-8 w-8 text-kaot-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">정부기관 협력</h3>
-              <p className="text-gray-600">정부 및 지방자치단체와 협력하여 보건의료 정책에 기여합니다.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">전국협회 협력</h3>
+              <p className="text-gray-600">대한작업치료사협회와 협력하여 전국 작업치료사들의 권익 보호와 전문성 향상을 지원합니다.</p>
             </div>
           </div>
         </div>
