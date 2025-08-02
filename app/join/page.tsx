@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
+
 import Link from 'next/link'
 import { User, Mail, Phone, FileText, Building, Award, Eye, EyeOff, Check, X } from 'lucide-react'
 
@@ -133,8 +132,7 @@ export default function JoinPage() {
 
   if (success) {
     return (
-      <main>
-        <Navigation />
+      <>
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -152,14 +150,12 @@ export default function JoinPage() {
             </Link>
           </div>
         </div>
-      </main>
+      </>
     )
   }
 
   return (
-    <main>
-      <Navigation />
-      
+    <>
       {/* Header */}
       <section className="bg-kaot-green-600 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -372,8 +368,6 @@ export default function JoinPage() {
           </form>
         </div>
       </div>
-
-      <Footer />
-    </main>
+    </>
   )
 } 
