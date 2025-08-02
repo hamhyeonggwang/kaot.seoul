@@ -1,9 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Navigation from '@/components/Navigation'
 import Hero from '@/components/Hero'
-import Footer from '@/components/Footer'
 import MemberStats from '@/components/MemberStats'
 import Link from 'next/link'
 import { Calendar, Users, MessageCircle, BookOpen, Award, Heart, Instagram, Play, ExternalLink, Users2, Newspaper, ArrowRight, Mail } from 'lucide-react'
@@ -97,8 +95,7 @@ export default function Home() {
   ]
 
   return (
-    <main>
-      <Navigation />
+    <>
       <Hero />
       <MemberStats />
       
@@ -304,8 +301,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </main>
+    </>
   )
 } 
