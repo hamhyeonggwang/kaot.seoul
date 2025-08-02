@@ -107,6 +107,15 @@ export default function Navigation() {
                 <Instagram className="h-5 w-5" />
                 <span className="ml-1 text-sm font-medium">@kaot.seoul</span>
               </a>
+              <a
+                href="https://www.band.us/band/82793225/invite"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
+              >
+                <span className="text-lg mr-1">🎵</span>
+                <span className="ml-1 text-sm font-medium">Band</span>
+              </a>
             </div>
 
             {/* Login/User Buttons */}
@@ -238,6 +247,18 @@ export default function Navigation() {
                 <div className="flex items-center">
                   <Instagram className="h-5 w-5 mr-2" />
                   <span>@kaot.seoul</span>
+                </div>
+              </a>
+              <a
+                href="https://www.band.us/band/82793225/invite"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="flex items-center">
+                  <span className="text-lg mr-2">🎵</span>
+                  <span>Band</span>
                 </div>
               </a>
               
