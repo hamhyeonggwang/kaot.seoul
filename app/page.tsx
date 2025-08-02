@@ -1,7 +1,6 @@
 import Navigation from '@/components/Navigation'
 import Hero from '@/components/Hero'
 import Footer from '@/components/Footer'
-import MemberStats from '@/components/MemberStats'
 import Link from 'next/link'
 import { Calendar, Users, MessageCircle, BookOpen, Award, Heart, Instagram, Play, ExternalLink, Users2, Newspaper } from 'lucide-react'
 
@@ -97,7 +96,6 @@ export default function Home() {
     <main>
       <Navigation />
       <Hero />
-      <MemberStats />
       
       {/* Recent News Section */}
       <section className="py-16 bg-white">
