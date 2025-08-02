@@ -2,34 +2,46 @@
 // 이 코드를 Google Apps Script 편집기에 복사하여 사용하세요
 
 // 스프레드시트 ID (실제 스프레드시트 ID로 변경 필요)
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'
+const SPREADSHEET_ID = '16nIkXJOW8T-9LEX_xHc6BxJAo8pIjb45ZDFNYrzK6d4'
 const SHEET_NAME = '회원명단'
 
 function doGet(e) {
   // GET 요청 처리 (회원 목록 조회)
-  const action = e.parameter.action
+  const action = e && e.parameter ? e.parameter.action : null
   
   if (action === 'getMembers') {
     return getMembers()
   }
   
-  return ContentService.createTextOutput(JSON.stringify({ error: 'Invalid action' }))
+  // 기본 응답 (테스트용)
+  return ContentService.createTextOutput(JSON.stringify({ 
+    message: 'KAOT Seoul Member Management API',
+    status: 'running',
+    action: action 
+  })).setMimeType(ContentService.MimeType.JSON)
 }
 
 function doPost(e) {
   // POST 요청 처리 (회원 추가/수정/삭제)
-  const data = JSON.parse(e.postData.contents)
-  const action = data.action
-  
-  switch (action) {
-    case 'addMember':
-      return addMember(data.data)
-    case 'updateMember':
-      return updateMember(data.data)
-    case 'deleteMember':
-      return deleteMember(data.id)
-    default:
-      return ContentService.createTextOutput(JSON.stringify({ error: 'Invalid action' }))
+  try {
+    const data = JSON.parse(e.postData.contents)
+    const action = data.action
+    
+    switch (action) {
+      case 'addMember':
+        return addMember(data.data)
+      case 'updateMember':
+        return updateMember(data.data)
+      case 'deleteMember':
+        return deleteMember(data.id)
+      default:
+        return ContentService.createTextOutput(JSON.stringify({ error: 'Invalid action' }))
+    }
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ 
+      success: false, 
+      error: 'Invalid request format: ' + error.toString() 
+    })).setMimeType(ContentService.MimeType.JSON)
   }
 }
 

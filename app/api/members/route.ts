@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Google Apps Script Web App URL (실제 배포 후 URL로 변경 필요)
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'
+// Google Apps Script Web App URL
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxi9jLaGa2ZgOJGpSCKCUYJWQq7ekrqvn-9koQPfXQtB78r_0O-rhvgFYyi80GkMGD-pQ/exec'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    // Google Apps Script에서 회원 데이터 가져오기
-    const response = await fetch(GOOGLE_APPS_SCRIPT_URL + '?action=getMembers')
+    const response = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?action=getMembers`)
     const data = await response.json()
     
     return NextResponse.json(data)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch members' }, { status: 500 })
+    console.error('Error fetching members:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch members' },
+      { status: 500 }
+    )
   }
 }
 
@@ -19,22 +22,23 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Google Apps Script로 회원 데이터 전송
     const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        action: 'addMember',
-        data: body
-      })
+      body: JSON.stringify(body)
     })
     
-    const result = await response.json()
-    return NextResponse.json(result)
+    const data = await response.json()
+    
+    return NextResponse.json(data)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to add member' }, { status: 500 })
+    console.error('Error in member API:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to process request' },
+      { status: 500 }
+    )
   }
 }
 
@@ -42,22 +46,23 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Google Apps Script로 회원 데이터 업데이트
     const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        action: 'updateMember',
-        data: body
-      })
+      body: JSON.stringify(body)
     })
     
-    const result = await response.json()
-    return NextResponse.json(result)
+    const data = await response.json()
+    
+    return NextResponse.json(data)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update member' }, { status: 500 })
+    console.error('Error updating member:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to update member' },
+      { status: 500 }
+    )
   }
 }
 
@@ -66,7 +71,13 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
     
-    // Google Apps Script로 회원 데이터 삭제
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: 'Member ID is required' },
+        { status: 400 }
+      )
+    }
+    
     const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
@@ -78,9 +89,14 @@ export async function DELETE(request: NextRequest) {
       })
     })
     
-    const result = await response.json()
-    return NextResponse.json(result)
+    const data = await response.json()
+    
+    return NextResponse.json(data)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete member' }, { status: 500 })
+    console.error('Error deleting member:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete member' },
+      { status: 500 }
+    )
   }
 } 

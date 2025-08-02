@@ -7,98 +7,57 @@ export default function CommunityPage() {
   const forumCategories = [
     {
       id: 1,
-      name: '일반 토론',
-      description: '작업치료 전반에 대한 자유로운 토론 공간',
-      postCount: 156,
-      lastPost: '2024-01-15'
+      name: '교육정보',
+      description: '교육 프로그램과 세미나 정보를 공유하는 공간',
+      postCount: 0,
+      lastPost: '-'
     },
     {
       id: 2,
-      name: '임상 사례',
-      description: '다양한 임상 사례를 공유하고 토론하는 공간',
-      postCount: 89,
-      lastPost: '2024-01-14'
+      name: '취업정보',
+      description: '채용 정보와 경력 개발에 대한 정보를 공유하는 공간',
+      postCount: 0,
+      lastPost: '-'
     },
     {
       id: 3,
-      name: '교육 정보',
-      description: '교육 프로그램과 세미나 정보를 공유하는 공간',
-      postCount: 67,
-      lastPost: '2024-01-13'
-    },
-    {
-      id: 4,
-      name: '연구 동향',
-      description: '최신 연구 동향과 논문 리뷰를 공유하는 공간',
-      postCount: 45,
-      lastPost: '2024-01-12'
-    },
-    {
-      id: 5,
-      name: '취업 정보',
-      description: '채용 정보와 경력 개발에 대한 정보를 공유하는 공간',
-      postCount: 123,
-      lastPost: '2024-01-11'
-    },
-    {
-      id: 6,
-      name: '회원 소식',
+      name: '회원소식',
       description: '회원들의 개인적인 소식과 근황을 공유하는 공간',
-      postCount: 78,
-      lastPost: '2024-01-10'
+      postCount: 0,
+      lastPost: '-'
     }
   ]
 
   const recentPosts = [
     {
       id: 1,
-      title: '작업치료사로서의 전문성 향상에 대한 토론',
-      author: '김작업',
-      category: '일반 토론',
-      date: '2024-01-15',
-      views: 245,
-      likes: 18,
-      comments: 12
-    },
-    {
-      id: 2,
-      title: '뇌졸중 환자의 ADL 훈련 사례 공유',
-      author: '이치료',
-      category: '임상 사례',
-      date: '2024-01-14',
-      views: 189,
-      likes: 25,
-      comments: 8
-    },
-    {
-      id: 3,
       title: '2024년 작업치료 관련 학회 일정',
       author: '박교육',
-      category: '교육 정보',
+      category: '교육정보',
       date: '2024-01-13',
       views: 156,
       likes: 32,
       comments: 15
     },
     {
-      id: 4,
-      title: '작업치료 효과성에 대한 최신 연구 리뷰',
-      author: '최연구',
-      category: '연구 동향',
-      date: '2024-01-12',
-      views: 134,
-      likes: 21,
-      comments: 6
-    },
-    {
-      id: 5,
+      id: 2,
       title: '서울 지역 병원 작업치료사 채용 정보',
       author: '정취업',
-      category: '취업 정보',
+      category: '취업정보',
       date: '2024-01-11',
       views: 298,
       likes: 45,
       comments: 23
+    },
+    {
+      id: 3,
+      title: '회원 소식 공유',
+      author: '김회원',
+      category: '회원소식',
+      date: '2024-01-10',
+      views: 89,
+      likes: 12,
+      comments: 8
     }
   ]
 
@@ -111,42 +70,6 @@ export default function CommunityPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-bold text-white mb-4">커뮤니티</h1>
           <p className="text-xl text-kaot-green-100">서울지부 회원들과 소통하고 정보를 공유하세요</p>
-        </div>
-      </section>
-
-      {/* Community Stats */}
-      <section className="py-8 bg-kaot-green-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <Users className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-gray-900">500+</h3>
-                <p className="text-gray-600">활성 회원</p>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <MessageCircle className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-gray-900">1,200+</h3>
-                <p className="text-gray-600">총 게시글</p>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <Calendar className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-gray-900">24</h3>
-                <p className="text-gray-600">이번 주 새 글</p>
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <ThumbsUp className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-gray-900">3,500+</h3>
-                <p className="text-gray-600">총 추천수</p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
