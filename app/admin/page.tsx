@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
+
 import { Plus, Edit, Trash2, Save, X, Eye, Calendar, User, Tag, BarChart3, Users, Newspaper, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -185,8 +184,7 @@ export default function AdminPage() {
   }
 
   return (
-    <main>
-      <Navigation />
+    <>
       
       {/* Header */}
       <section className="bg-kaot-green-600 py-16">
@@ -463,7 +461,6 @@ export default function AdminPage() {
          </div>
       </div>
 
-      <Footer />
-    </main>
+    </>
   )
 } 

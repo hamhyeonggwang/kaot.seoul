@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
-import { Users, Newspaper, Eye, TrendingUp, Calendar, Activity, UserPlus, FileText, BarChart3, LogOut, User, Globe } from 'lucide-react'
+
+import { Users, Newspaper, Eye, TrendingUp, Calendar, Activity, UserPlus, FileText, BarChart3, LogOut, User, Globe, Database, CheckCircle, XCircle } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { useRouter } from 'next/navigation'
 
@@ -34,6 +33,15 @@ interface Stats {
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [googleAppsScriptStatus, setGoogleAppsScriptStatus] = useState<{
+    connected: boolean
+    message: string
+    loading: boolean
+  }>({
+    connected: false,
+    message: '연결 상태 확인 중...',
+    loading: true
+  })
   const router = useRouter()
 
   // 인증 체크
@@ -52,6 +60,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchStats()
+    checkGoogleAppsScriptConnection()
   }, [])
 
   const fetchStats = async () => {
@@ -66,6 +75,26 @@ export default function DashboardPage() {
       console.error('통계 데이터 로드 중 오류:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const checkGoogleAppsScriptConnection = async () => {
+    try {
+      const response = await fetch('/api/google-apps-script/test')
+      const result = await response.json()
+      
+      setGoogleAppsScriptStatus({
+        connected: result.success,
+        message: result.success ? 'Google Apps Script 연결됨' : result.error || '연결 실패',
+        loading: false
+      })
+    } catch (error) {
+      console.error('Google Apps Script 연결 테스트 중 오류:', error)
+      setGoogleAppsScriptStatus({
+        connected: false,
+        message: '연결 테스트 중 오류 발생',
+        loading: false
+      })
     }
   }
 
@@ -107,18 +136,14 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <main>
-        <Navigation />
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-gray-500">대시보드를 불러오는 중...</div>
-        </div>
-      </main>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-gray-500">대시보드를 불러오는 중...</div>
+      </div>
     )
   }
 
   return (
-    <main>
-      <Navigation />
+    <>
       
       {/* Header */}
       <section className="bg-kaot-green-600 py-16">
@@ -148,6 +173,9 @@ export default function DashboardPage() {
           <a href="/admin/members" className="px-4 py-2 bg-white text-kaot-green-600 border border-kaot-green-600 rounded-lg font-medium hover:bg-kaot-green-50">
             회원 관리
           </a>
+          <a href="/admin/files" className="px-4 py-2 bg-white text-kaot-green-600 border border-kaot-green-600 rounded-lg font-medium hover:bg-kaot-green-50">
+            파일 관리
+          </a>
           <a href="/admin" className="px-4 py-2 bg-white text-kaot-green-600 border border-kaot-green-600 rounded-lg font-medium hover:bg-kaot-green-50">
             지부소식 관리
           </a>
@@ -157,6 +185,40 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {stats && (
           <>
+            {/* Google Apps Script Connection Status */}
+            <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className={`p-3 rounded-full ${googleAppsScriptStatus.connected ? 'bg-green-100' : 'bg-red-100'}`}>
+                    <Database className={`h-6 w-6 ${googleAppsScriptStatus.connected ? 'text-green-600' : 'text-red-600'}`} />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-semibold text-gray-900">Google Apps Script 연결 상태</h3>
+                    <p className={`text-sm ${googleAppsScriptStatus.connected ? 'text-green-600' : 'text-red-600'}`}>
+                      {googleAppsScriptStatus.loading ? '확인 중...' : googleAppsScriptStatus.message}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  {googleAppsScriptStatus.connected ? (
+                    <CheckCircle className="h-6 w-6 text-green-500" />
+                  ) : (
+                    <XCircle className="h-6 w-6 text-red-500" />
+                  )}
+                </div>
+              </div>
+              {!googleAppsScriptStatus.connected && !googleAppsScriptStatus.loading && (
+                <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    Google Apps Script가 연결되지 않았습니다. 환경 변수 <code className="bg-yellow-100 px-1 rounded">GOOGLE_APPS_SCRIPT_URL</code>을 설정하거나 
+                    <a href="/admin/google-apps-script-setup" className="text-blue-600 hover:text-blue-800 underline ml-1">
+                      설정 가이드
+                    </a>를 확인하세요.
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
               <div className="bg-white rounded-lg shadow-lg p-6">
@@ -320,7 +382,6 @@ export default function DashboardPage() {
         )}
       </div>
 
-      <Footer />
-    </main>
+    </>
   )
 } 

@@ -5,12 +5,19 @@
 const SPREADSHEET_ID = '16nIkXJOW8T-9LEX_xHc6BxJAo8pIjb45ZDFNYrzK6d4'
 const SHEET_NAME = '회원명단'
 
+// Google Drive 폴더 ID (실제 폴더 ID로 변경 필요)
+const DRIVE_FOLDER_ID = 'YOUR_DRIVE_FOLDER_ID'
+
 function doGet(e) {
-  // GET 요청 처리 (회원 목록 조회)
+  // GET 요청 처리 (회원 목록 조회, 파일 목록 조회)
   const action = e && e.parameter ? e.parameter.action : null
   
   if (action === 'getMembers') {
     return getMembers()
+  }
+  
+  if (action === 'getFiles') {
+    return getFiles()
   }
   
   // 기본 응답 (테스트용)
@@ -22,7 +29,7 @@ function doGet(e) {
 }
 
 function doPost(e) {
-  // POST 요청 처리 (회원 추가/수정/삭제)
+  // POST 요청 처리 (회원 추가/수정/삭제, 파일 업로드)
   try {
     const data = JSON.parse(e.postData.contents)
     const action = data.action
@@ -34,6 +41,10 @@ function doPost(e) {
         return updateMember(data.data)
       case 'deleteMember':
         return deleteMember(data.id)
+      case 'uploadFile':
+        return uploadFile(data.fileData, data.fileName)
+      case 'deleteFile':
+        return deleteFile(data.fileId)
       default:
         return ContentService.createTextOutput(JSON.stringify({ error: 'Invalid action' }))
     }
@@ -213,4 +224,83 @@ function backupData() {
     success: true,
     message: '데이터가 성공적으로 백업되었습니다.'
   })).setMimeType(ContentService.MimeType.JSON)
+}
+
+// 파일 업로드 함수
+function uploadFile(fileData, fileName) {
+  try {
+    // Base64 디코딩
+    const blob = Utilities.newBlob(Utilities.base64Decode(fileData), 'application/octet-stream', fileName)
+    
+    // Google Drive에 파일 업로드
+    const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID)
+    const file = folder.createFile(blob)
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: '파일이 성공적으로 업로드되었습니다.',
+      data: {
+        id: file.getId(),
+        name: file.getName(),
+        size: file.getSize(),
+        url: file.getUrl(),
+        webContentLink: file.getDownloadUrl()
+      }
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+// 파일 삭제 함수
+function deleteFile(fileId) {
+  try {
+    const file = DriveApp.getFileById(fileId)
+    file.setTrashed(true)
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: '파일이 성공적으로 삭제되었습니다.'
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+// 파일 목록 조회 함수
+function getFiles() {
+  try {
+    const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID)
+    const files = folder.getFiles()
+    const fileList = []
+    
+    while (files.hasNext()) {
+      const file = files.next()
+      fileList.push({
+        id: file.getId(),
+        name: file.getName(),
+        size: file.getSize(),
+        url: file.getUrl(),
+        webContentLink: file.getDownloadUrl(),
+        createdTime: file.getDateCreated().toISOString(),
+        modifiedTime: file.getLastUpdated().toISOString()
+      })
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      data: fileList
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
 } 

@@ -58,9 +58,9 @@
 - [x] Instagram 링크 연동
 
 ### 🔄 개발 중인 기능
-- [ ] Google Apps Script 연동
-- [ ] 실제 데이터베이스 연동
-- [ ] 회원 관리 시스템
+- [x] Google Apps Script 연동 ✅
+- [x] 실제 데이터베이스 연동 ✅
+- [x] 회원 관리 시스템 ✅
 - [ ] 게시판 CRUD 기능
 - [ ] 댓글 시스템
 - [ ] 파일 업로드 기능
@@ -112,13 +112,26 @@ npm start
 `.env.local` 파일을 생성하고 다음 변수들을 설정하세요:
 
 ```env
-# Google Apps Script URL (선택사항)
+# Google Apps Script URL (필수 - 실제 데이터베이스 연동용)
 GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
 
 # 관리자 계정 (실제 운영 시 변경 필요)
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin
+
+# 기타 설정
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
+
+### Google Apps Script 설정
+Google Apps Script 연동을 위해서는 다음 단계를 따라주세요:
+
+1. **Google Sheets 생성**: 회원 데이터 저장용 스프레드시트 생성
+2. **Google Apps Script 설정**: `GOOGLE_APPS_SCRIPT_SETUP.md` 참조
+3. **Web App 배포**: Google Apps Script를 Web App으로 배포
+4. **환경 변수 설정**: Web App URL을 `GOOGLE_APPS_SCRIPT_URL`에 설정
+
+자세한 설정 방법은 [Google Apps Script 설정 가이드](./GOOGLE_APPS_SCRIPT_SETUP.md)를 참조하세요.
 
 ## 📞 문의
 

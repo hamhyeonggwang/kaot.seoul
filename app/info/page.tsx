@@ -7,8 +7,8 @@ export default function InfoPage() {
     { name: '교육 영상', active: false },
     { name: '자료실', active: false },
     { name: '공지사항', active: false },
-    { name: '가이드라인', active: false },
-    { name: '연구 자료', active: false }
+    { name: '정책자료', active: false },
+    { name: '연구자료', active: false }
   ]
 
   const contentItems = [
@@ -25,13 +25,13 @@ export default function InfoPage() {
     },
     {
       id: 2,
-      title: '작업치료사 자격증 갱신 가이드라인',
-      description: '작업치료사 자격증 갱신을 위한 상세한 가이드라인과 절차를 안내합니다.',
+      title: '작업치료사 자격증 갱신 정책자료',
+      description: '작업치료사 자격증 갱신을 위한 상세한 정책자료와 절차를 안내합니다.',
       type: 'document',
       fileSize: '2.3MB',
       downloads: '1,234',
       date: '2024-01-08',
-      category: '가이드라인'
+      category: '정책자료'
     },
     {
       id: 3,
@@ -41,7 +41,7 @@ export default function InfoPage() {
       fileSize: '5.7MB',
       downloads: '890',
       date: '2024-01-05',
-      category: '연구 자료'
+      category: '연구자료'
     },
     {
       id: 4,
@@ -92,16 +92,18 @@ export default function InfoPage() {
       href: '/info/education'
     },
     {
-      title: '연구 자료',
+      title: '연구자료',
       description: '작업치료 관련 연구 논문 및 자료',
       icon: <Info className="h-8 w-8" />,
-      href: '/info/research'
+      href: 'https://kaot.org/board/index.jsp?code=treatise',
+      external: true
     },
     {
-      title: '가이드라인',
-      description: '작업치료 실무 가이드라인',
+      title: '정책자료',
+      description: '작업치료 관련 정책 및 가이드라인',
       icon: <Download className="h-8 w-8" />,
-      href: '/info/guidelines'
+      href: 'https://kaot.org/board/index.jsp?code=policy',
+      external: true
     }
   ]
 

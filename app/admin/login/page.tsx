@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
+
 import { Lock, User, Eye, EyeOff } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -33,8 +32,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main>
-      <Navigation />
+    <>
       
       {/* Header */}
       <section className="bg-kaot-green-600 py-16">
@@ -119,7 +117,6 @@ export default function AdminLoginPage() {
         </div>
       </div>
 
-      <Footer />
-    </main>
+    </>
   )
 } 

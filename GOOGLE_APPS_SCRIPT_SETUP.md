@@ -1,143 +1,324 @@
 # Google Apps Script 설정 가이드
 
-## 1. Google Sheets 생성
+대한작업치료사협회 서울지부 홈페이지의 Google Apps Script 연동을 위한 상세 설정 가이드입니다.
 
+## 📋 목차
+
+1. [Google Sheets 설정](#1-google-sheets-설정)
+2. [Google Apps Script 설정](#2-google-apps-script-설정)
+3. [Web App 배포](#3-web-app-배포)
+4. [환경 변수 설정](#4-환경-변수-설정)
+5. [연결 테스트](#5-연결-테스트)
+6. [문제 해결](#6-문제-해결)
+
+## 1. Google Sheets 설정
+
+### 1.1 스프레드시트 생성
 1. [Google Sheets](https://sheets.google.com)에 접속
 2. 새 스프레드시트 생성
 3. 스프레드시트 이름을 "KAOT 서울지부 회원명단"으로 변경
-4. 스프레드시트 ID 복사 (URL에서 확인)
+
+### 1.2 스프레드시트 ID 확인
+1. 스프레드시트 URL에서 ID 복사
+   - URL 형식: `https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit`
+   - 예시: `https://docs.google.com/spreadsheets/d/16nIkXJOW8T-9LEX_xHc6BxJAo8pIjb45ZDFNYrzK6d4/edit`
+   - ID: `16nIkXJOW8T-9LEX_xHc6BxJAo8pIjb45ZDFNYrzK6d4`
+
+### 1.3 시트 설정
+1. 첫 번째 시트 이름을 "회원명단"으로 변경
+2. 헤더 행 설정:
+   ```
+   ID | 이름 | 자격번호 | 이메일 | 전화번호 | 주소 | 근무기관 | 직책 | 경력 | 관심분야 | 가입일 | 상태 | 메모
+   ```
 
 ## 2. Google Apps Script 설정
 
+### 2.1 프로젝트 생성
 1. [Google Apps Script](https://script.google.com)에 접속
-2. 새 프로젝트 생성
+2. "새 프로젝트" 클릭
 3. 프로젝트 이름을 "KAOT Seoul Member Management"로 변경
-4. `google-apps-script-example.gs` 파일의 내용을 복사하여 붙여넣기
 
-## 3. 스프레드시트 ID 설정
+### 2.2 코드 작성
+1. `Code.gs` 파일에 다음 코드 복사:
 
 ```javascript
-// 이 부분을 실제 스프레드시트 ID로 변경
-const SPREADSHEET_ID = 'YOUR_ACTUAL_SPREADSHEET_ID'
+// Google Apps Script for KAOT Seoul Member Management
+const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE' // 실제 스프레드시트 ID로 변경
+const SHEET_NAME = '회원명단'
+
+function doGet(e) {
+  const action = e && e.parameter ? e.parameter.action : null
+  
+  if (action === 'getMembers') {
+    return getMembers()
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({ 
+    message: 'KAOT Seoul Member Management API',
+    status: 'running',
+    action: action 
+  })).setMimeType(ContentService.MimeType.JSON)
+}
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents)
+    const action = data.action
+    
+    switch (action) {
+      case 'addMember':
+        return addMember(data.data)
+      case 'updateMember':
+        return updateMember(data.data)
+      case 'deleteMember':
+        return deleteMember(data.id)
+      default:
+        return ContentService.createTextOutput(JSON.stringify({ error: 'Invalid action' }))
+    }
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ 
+      success: false, 
+      error: 'Invalid request format: ' + error.toString() 
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+function getMembers() {
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME)
+    const data = sheet.getDataRange().getValues()
+    
+    const headers = data[0]
+    const rows = data.slice(1)
+    
+    const members = rows.map((row, index) => {
+      const member = {}
+      headers.forEach((header, i) => {
+        member[header] = row[i]
+      })
+      member.id = index + 1
+      return member
+    })
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      data: members
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+function addMember(memberData) {
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME)
+    
+    memberData['가입일'] = new Date().toISOString().split('T')[0]
+    memberData['상태'] = '대기'
+    
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
+    const rowData = headers.map(header => memberData[header] || '')
+    
+    sheet.appendRow(rowData)
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: '회원이 성공적으로 추가되었습니다.'
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+function updateMember(memberData) {
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME)
+    const data = sheet.getDataRange().getValues()
+    const headers = data[0]
+    
+    const rowIndex = data.findIndex((row, index) => index > 0 && row[0] == memberData.id)
+    
+    if (rowIndex === -1) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        error: '회원을 찾을 수 없습니다.'
+      })).setMimeType(ContentService.MimeType.JSON)
+    }
+    
+    const rowData = headers.map(header => memberData[header] || '')
+    sheet.getRange(rowIndex + 1, 1, 1, headers.length).setValues([rowData])
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: '회원 정보가 성공적으로 업데이트되었습니다.'
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+function deleteMember(id) {
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME)
+    const data = sheet.getDataRange().getValues()
+    
+    const rowIndex = data.findIndex((row, index) => index > 0 && row[0] == id)
+    
+    if (rowIndex === -1) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        error: '회원을 찾을 수 없습니다.'
+      })).setMimeType(ContentService.MimeType.JSON)
+    }
+    
+    sheet.deleteRow(rowIndex + 1)
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: '회원이 성공적으로 삭제되었습니다.'
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
 ```
 
-## 4. 스프레드시트 초기 설정
+### 2.3 스프레드시트 ID 설정
+1. 코드 상단의 `SPREADSHEET_ID` 변수를 실제 스프레드시트 ID로 변경
+2. 저장 (Ctrl+S)
 
-1. Apps Script 편집기에서 `setupSpreadsheet()` 함수 실행
-2. 권한 요청 시 "고급" → "안전하지 않은 앱으로 이동" 클릭
-3. "허용" 클릭
+### 2.4 권한 설정
+1. "실행" → "함수 실행" → "doGet" 선택
+2. 권한 요청 창에서 "권한 검토" 클릭
+3. "고급" → "안전하지 않은 페이지로 이동" 클릭
+4. "허용" 클릭
 
-## 5. Web App 배포
+## 3. Web App 배포
 
+### 3.1 배포 설정
 1. "배포" → "새 배포" 클릭
 2. "유형 선택" → "웹 앱" 선택
 3. 설정:
+   - **설명**: "KAOT Seoul Member Management API"
    - **실행할 사용자**: "나"
    - **액세스 권한**: "모든 사용자"
 4. "배포" 클릭
-5. Web App URL 복사
 
-## 6. 환경 변수 설정
+### 3.2 Web App URL 확인
+1. 배포 완료 후 Web App URL 복사
+2. URL 형식: `https://script.google.com/macros/s/SCRIPT_ID/exec`
 
-### Vercel에서 설정
-1. Vercel 대시보드 → 프로젝트 → Settings → Environment Variables
-2. 변수 추가:
-   - **이름**: `GOOGLE_APPS_SCRIPT_URL`
-   - **값**: Web App URL
+## 4. 환경 변수 설정
 
-### 로컬에서 설정
-`.env.local` 파일 생성:
+### 4.1 .env.local 파일 생성
+프로젝트 루트에 `.env.local` 파일을 생성하고 다음 내용 추가:
+
 ```env
+# Google Apps Script URL
 GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
+
+# 관리자 계정
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin
+
+# 기타 설정
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
-## 7. 테스트
+### 4.2 URL 업데이트
+`YOUR_SCRIPT_ID`를 실제 Web App URL의 스크립트 ID로 변경
 
-1. 회원가입 폼에서 테스트 데이터 입력
-2. 제출 후 Google Sheets에서 데이터 확인
-3. 관리자 대시보드에서 회원 목록 확인
+## 5. 연결 테스트
 
-## 8. 보안 설정
-
-### CORS 설정 (필요시)
-```javascript
-// Apps Script에 추가
-function doOptions(e) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  }
-  
-  return ContentService.createTextOutput('')
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeaders(headers)
-}
+### 5.1 개발 서버 실행
+```bash
+npm run dev
 ```
 
-## 9. 백업 설정
+### 5.2 관리자 페이지 접속
+1. `http://localhost:3000/admin/login` 접속
+2. 관리자 계정으로 로그인
+3. 대시보드에서 Google Apps Script 연결 상태 확인
 
-### 자동 백업
+### 5.3 회원 관리 테스트
+1. 회원 관리 페이지 접속
+2. 회원 추가/수정/삭제 테스트
+3. Google Sheets에서 데이터 확인
+
+## 6. 문제 해결
+
+### 6.1 일반적인 오류
+
+#### CORS 오류
+- Google Apps Script에서 CORS 헤더 설정 필요
+- `doGet` 함수에 다음 추가:
 ```javascript
-// 매일 자동 백업 (선택사항)
-function createDailyBackup() {
-  backupData()
-}
+return ContentService.createTextOutput(JSON.stringify(data))
+  .setMimeType(ContentService.MimeType.JSON)
+  .setHeader('Access-Control-Allow-Origin', '*')
 ```
 
-## 10. 문제 해결
+#### 권한 오류
+- Google Apps Script 실행 권한 확인
+- 스프레드시트 공유 설정 확인
+- Web App 배포 설정 재확인
 
-### 일반적인 오류
-1. **권한 오류**: Apps Script에서 스프레드시트 권한 확인
-2. **CORS 오류**: Web App URL이 올바른지 확인
-3. **데이터 오류**: 스프레드시트 헤더가 올바른지 확인
+#### 연결 실패
+- 환경 변수 URL 확인
+- Web App URL 유효성 검사
+- 네트워크 연결 상태 확인
 
-### 로그 확인
-1. Apps Script → "실행" → "실행 로그" 확인
-2. 브라우저 개발자 도구 → Network 탭 확인
+### 6.2 디버깅 방법
 
-## 11. 추가 기능
+#### Google Apps Script 로그 확인
+1. Google Apps Script 편집기에서 "실행" → "실행 로그" 확인
+2. 오류 메시지 및 실행 흐름 분석
 
-### 이메일 알림
-```javascript
-// 새 회원 가입 시 이메일 알림
-function sendNewMemberNotification(memberData) {
-  const email = "admin@kaot-seoul.or.kr"
-  const subject = "새 회원 가입 신청"
-  const body = `
-    새로운 회원 가입 신청이 있습니다.
-    
-    이름: ${memberData.name}
-    이메일: ${memberData.email}
-    전화번호: ${memberData.phone}
-    
-    관리자 페이지에서 승인해주세요.
-  `
-  
-  MailApp.sendEmail(email, subject, body)
-}
+#### 브라우저 개발자 도구
+1. F12 키로 개발자 도구 열기
+2. Network 탭에서 API 요청/응답 확인
+3. Console 탭에서 JavaScript 오류 확인
+
+#### 서버 로그 확인
+```bash
+# 개발 서버 로그 확인
+npm run dev
+
+# 프로덕션 로그 확인 (Vercel 등)
+vercel logs
 ```
 
-### 승인 시스템
-```javascript
-// 회원 승인 함수
-function approveMember(memberId) {
-  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME)
-  const data = sheet.getDataRange().getValues()
-  
-  // ID로 회원 찾기
-  const rowIndex = data.findIndex((row, index) => index > 0 && row[0] == memberId)
-  
-  if (rowIndex !== -1) {
-    // 상태를 '승인'으로 변경
-    sheet.getRange(rowIndex + 1, 12).setValue('승인')
-    
-    // 승인 이메일 발송
-    const memberEmail = data[rowIndex][3] // 이메일 열
-    const memberName = data[rowIndex][1] // 이름 열
-    
-    MailApp.sendEmail(memberEmail, "회원 승인 완료", 
-      `${memberName}님의 회원 가입이 승인되었습니다.`)
-  }
-}
-``` 
+### 6.3 성능 최적화
+
+#### 캐싱 설정
+- Google Apps Script에서 캐시 활용
+- 클라이언트 측 캐싱 구현
+
+#### 배치 처리
+- 대량 데이터 처리 시 배치 API 사용
+- 페이지네이션 구현
+
+## 📞 지원
+
+문제가 발생하면 다음을 확인하세요:
+
+1. **Google Apps Script 설정**: 권한, 배포 설정
+2. **환경 변수**: URL, 계정 정보
+3. **네트워크**: 인터넷 연결, 방화벽 설정
+4. **브라우저**: 캐시 삭제, 새 시크릿 창에서 테스트
+
+## 🔄 업데이트
+
+이 가이드는 지속적으로 업데이트됩니다. 최신 버전은 프로젝트 저장소에서 확인하세요. 
