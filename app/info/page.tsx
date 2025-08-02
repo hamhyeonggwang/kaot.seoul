@@ -79,10 +79,11 @@ export default function InfoPage() {
 
   const quickLinks = [
     {
-      title: '자격증 갱신',
-      description: '작업치료사 자격증 갱신 관련 정보',
+      title: '면허 관리',
+      description: '작업치료사 면허신고 및 관리',
       icon: <FileText className="h-8 w-8" />,
-      href: '/info/license'
+      href: 'https://kaot.org/help/return.jsp#a',
+      external: true
     },
     {
       title: '교육 프로그램',
@@ -124,15 +125,27 @@ export default function InfoPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {quickLinks.map((link, index) => (
-              <Link key={index} href={link.href}>
-                <div className="card text-center hover:shadow-xl transition-shadow duration-200">
-                  <div className="bg-kaot-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-kaot-green-600">
-                    {link.icon}
+              link.external ? (
+                <a key={index} href={link.href} target="_blank" rel="noopener noreferrer">
+                  <div className="card text-center hover:shadow-xl transition-shadow duration-200">
+                    <div className="bg-kaot-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-kaot-green-600">
+                      {link.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{link.title}</h3>
+                    <p className="text-gray-600">{link.description}</p>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{link.title}</h3>
-                  <p className="text-gray-600">{link.description}</p>
-                </div>
-              </Link>
+                </a>
+              ) : (
+                <Link key={index} href={link.href}>
+                  <div className="card text-center hover:shadow-xl transition-shadow duration-200">
+                    <div className="bg-kaot-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-kaot-green-600">
+                      {link.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{link.title}</h3>
+                    <p className="text-gray-600">{link.description}</p>
+                  </div>
+                </Link>
+              )
             ))}
           </div>
         </div>
