@@ -54,18 +54,7 @@ export default function Hero() {
               </Link>
             </div>
 
-            {/* Band Community Link */}
-            <div className="flex items-center">
-              <a
-                href="https://www.band.us/band/82793225/invite"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-kaot-green-600 hover:text-kaot-green-700 transition-colors duration-200"
-              >
-                <span className="mr-1">🎵</span>
-                <span>Band 커뮤니티</span>
-              </a>
-            </div>
+
           </div>
 
           {/* Right Content - Interactive Folders */}
