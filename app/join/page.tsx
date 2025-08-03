@@ -123,7 +123,29 @@ export default function JoinPage() {
   }
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    let processedValue = value
+    
+    // 전화번호 필드에 대한 자동 하이픈 처리
+    if (field === 'phone') {
+      // 숫자만 추출
+      const numbers = value.replace(/[^0-9]/g, '')
+      
+      // 11자리 이하일 때만 하이픈 추가
+      if (numbers.length <= 11) {
+        if (numbers.length <= 3) {
+          processedValue = numbers
+        } else if (numbers.length <= 7) {
+          processedValue = numbers.slice(0, 3) + '-' + numbers.slice(3)
+        } else {
+          processedValue = numbers.slice(0, 3) + '-' + numbers.slice(3, 7) + '-' + numbers.slice(7)
+        }
+      } else {
+        // 11자리를 초과하면 이전 값 유지
+        processedValue = formData.phone
+      }
+    }
+    
+    setFormData(prev => ({ ...prev, [field]: processedValue }))
     // 에러 메시지 제거 (비밀번호 필드는 제외)
     if (errors[field] && field !== 'password' && field !== 'confirmPassword') {
       setErrors(prev => ({ ...prev, [field]: '' }))
