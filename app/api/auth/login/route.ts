@@ -41,12 +41,11 @@ export async function POST(request: NextRequest) {
       }, { status: 403 })
     }
 
-    // 이메일 인증 확인
+    // 이메일 인증 확인 (선택사항)
     if (!user.emailVerified) {
-      return NextResponse.json({ 
-        success: false, 
-        error: '이메일 인증이 완료되지 않았습니다. 이메일을 확인해주세요.' 
-      }, { status: 403 })
+      console.log(`이메일 미인증 사용자 로그인: ${email}`)
+      // 이메일 인증이 완료되지 않아도 로그인 허용
+      // 필요시 나중에 이메일 인증을 완료하도록 안내
     }
 
     // 마지막 로그인 시간 업데이트

@@ -78,35 +78,21 @@ export async function POST(request: NextRequest) {
       membershipType,
       joinDate: now.split('T')[0],
       status: 'active',
-      emailVerified: false, // 이메일 인증 필요
+      emailVerified: true, // 이메일 인증 자동 완료
       createdAt: now
     })
 
-    // 이메일 인증 토큰 생성 및 저장
-    const verificationToken = emailUtils.generateVerificationToken()
-    emailUtils.saveVerificationToken(email, verificationToken)
 
-    // 이메일 인증 메일 발송 (선택사항)
-    let emailSent = false
-    try {
-      emailSent = await emailUtils.sendVerificationEmail(email, name, verificationToken)
-    } catch (error) {
-      console.error('이메일 발송 중 오류:', error)
-      // 이메일 발송 실패해도 회원가입은 완료
-      emailSent = false
-    }
 
     return NextResponse.json({ 
       success: true, 
-      message: emailSent 
-        ? '회원가입이 완료되었습니다. 이메일을 확인하여 인증을 완료해주세요.'
-        : '회원가입이 완료되었습니다. 관리자 승인 후 로그인이 가능합니다.',
+      message: '회원가입이 완료되었습니다. 바로 로그인이 가능합니다.',
       data: {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
         emailVerified: newUser.emailVerified,
-        emailSent
+        emailSent: false
       }
     })
   } catch (error) {
