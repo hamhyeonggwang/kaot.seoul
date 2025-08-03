@@ -1,7 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { writeFile, readFile, mkdir } from 'fs/promises'
+import { existsSync } from 'fs'
+import path from 'path'
 
-// 실제로는 데이터베이스에서 관리해야 하지만, 여기서는 파일 시스템이나 외부 API를 사용
-let newsData = [
+// 뉴스 데이터 파일 경로
+const NEWS_FILE = path.join(process.cwd(), 'data', 'news.json')
+
+// 뉴스 타입 정의
+interface NewsItem {
+  id: number
+  title: string
+  content: string
+  category: string
+  date: string
+  author: string
+  views: number
+  tags: string[]
+}
+
+// 기본 뉴스 데이터
+const defaultNewsData: NewsItem[] = [
   {
     id: 1,
     title: 'KAOT 서울지부 홈페이지 개설 안내',
@@ -44,8 +62,52 @@ let newsData = [
   }
 ]
 
+// 뉴스 데이터 읽기
+async function loadNewsData(): Promise<NewsItem[]> {
+  try {
+    if (!existsSync(NEWS_FILE)) {
+      // 파일이 없으면 기본 데이터로 생성
+      const dataDir = path.dirname(NEWS_FILE)
+      if (!existsSync(dataDir)) {
+        await mkdir(dataDir, { recursive: true })
+      }
+      await writeFile(NEWS_FILE, JSON.stringify(defaultNewsData, null, 2))
+      return defaultNewsData
+    }
+    
+    const fileContent = await readFile(NEWS_FILE, 'utf-8')
+    return JSON.parse(fileContent)
+  } catch (error) {
+    console.error('뉴스 데이터 로드 중 오류:', error)
+    return defaultNewsData
+  }
+}
+
+// 뉴스 데이터 저장
+async function saveNewsData(data: NewsItem[]): Promise<void> {
+  try {
+    const dataDir = path.dirname(NEWS_FILE)
+    if (!existsSync(dataDir)) {
+      await mkdir(dataDir, { recursive: true })
+    }
+    await writeFile(NEWS_FILE, JSON.stringify(data, null, 2))
+  } catch (error) {
+    console.error('뉴스 데이터 저장 중 오류:', error)
+    throw error
+  }
+}
+
 export async function GET() {
-  return NextResponse.json({ success: true, data: newsData })
+  try {
+    const newsData = await loadNewsData()
+    return NextResponse.json({ success: true, data: newsData })
+  } catch (error) {
+    console.error('뉴스 데이터 조회 중 오류:', error)
+    return NextResponse.json({ 
+      success: false, 
+      error: '뉴스 데이터를 불러오는 중 오류가 발생했습니다.' 
+    }, { status: 500 })
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -53,8 +115,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { title, content, category, date, author, tags } = body
     
+    const newsData = await loadNewsData()
     const newId = Math.max(...newsData.map(item => item.id)) + 1
-    const newNews = {
+    const newNews: NewsItem = {
       id: newId,
       title,
       content,
@@ -62,10 +125,13 @@ export async function POST(request: NextRequest) {
       date,
       author,
       views: 0,
-      tags
+      tags: tags || []
     }
     
     newsData.push(newNews)
+    await saveNewsData(newsData)
+    
+    console.log('새 뉴스 추가:', newNews)
     
     return NextResponse.json({ 
       success: true, 
@@ -73,6 +139,7 @@ export async function POST(request: NextRequest) {
       data: newNews
     })
   } catch (error) {
+    console.error('뉴스 추가 중 오류:', error)
     return NextResponse.json({ 
       success: false, 
       error: '지부소식 추가 중 오류가 발생했습니다.' 
@@ -85,6 +152,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { id, title, content, category, date, author, tags } = body
     
+    const newsData = await loadNewsData()
     const index = newsData.findIndex(item => item.id === id)
     if (index === -1) {
       return NextResponse.json({ 
@@ -102,8 +170,12 @@ export async function PUT(request: NextRequest) {
       date,
       author,
       views,
-      tags
+      tags: tags || []
     }
+    
+    await saveNewsData(newsData)
+    
+    console.log('뉴스 수정:', newsData[index])
     
     return NextResponse.json({ 
       success: true, 
@@ -111,6 +183,7 @@ export async function PUT(request: NextRequest) {
       data: newsData[index]
     })
   } catch (error) {
+    console.error('뉴스 수정 중 오류:', error)
     return NextResponse.json({ 
       success: false, 
       error: '지부소식 수정 중 오류가 발생했습니다.' 
@@ -123,6 +196,7 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const id = parseInt(searchParams.get('id') || '0')
     
+    const newsData = await loadNewsData()
     const index = newsData.findIndex(item => item.id === id)
     if (index === -1) {
       return NextResponse.json({ 
@@ -132,6 +206,9 @@ export async function DELETE(request: NextRequest) {
     }
     
     const deletedNews = newsData.splice(index, 1)[0]
+    await saveNewsData(newsData)
+    
+    console.log('뉴스 삭제:', deletedNews)
     
     return NextResponse.json({ 
       success: true, 
@@ -139,6 +216,7 @@ export async function DELETE(request: NextRequest) {
       data: deletedNews
     })
   } catch (error) {
+    console.error('뉴스 삭제 중 오류:', error)
     return NextResponse.json({ 
       success: false, 
       error: '지부소식 삭제 중 오류가 발생했습니다.' 
