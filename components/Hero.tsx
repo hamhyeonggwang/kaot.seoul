@@ -44,8 +44,8 @@ export default function Hero() {
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Link href="/join" className="btn-primary inline-flex items-center bg-kaot-green-600 hover:bg-kaot-green-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
-                지금 바로 회원가입
+              <Link href="/community" className="btn-primary inline-flex items-center bg-kaot-green-600 hover:bg-kaot-green-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+                커뮤니티 바로가기
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               <Link href="/news" className="btn-secondary inline-flex items-center border-2 border-kaot-green-600 text-kaot-green-600 hover:bg-kaot-green-600 hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200">
