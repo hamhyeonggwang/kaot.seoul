@@ -62,10 +62,6 @@ export default function Home() {
     }
   }
 
-
-
-
-
   return (
     <>
       <Hero />
@@ -133,40 +129,37 @@ export default function Home() {
         </div>
       </section>
 
-
-
-
-
-      {/* CTA Section */}
+      {/* Newsletter CTA Section */}
       <section className="py-16 bg-kaot-green-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">지금 바로 회원가입하세요</h2>
+          <h2 className="text-3xl font-bold text-white mb-4">서울지부 뉴스레터 구독</h2>
           <p className="text-xl text-kaot-green-100 mb-8">
-            서울지부와 함께 작업치료의 미래를 만들어가세요
+            정기적으로 업데이트되는 서울지부 소식과 업계 정보를 받아보세요
           </p>
 
-          {/* Member Benefits */}
+          {/* Newsletter Benefits */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white bg-opacity-10 rounded-lg p-4">
+              <div className="text-2xl mb-2">📰</div>
+              <h3 className="text-lg font-semibold text-white mb-2">최신 소식</h3>
+              <p className="text-kaot-green-100">서울지부의 활동과 업계 동향</p>
+            </div>
+            <div className="bg-white bg-opacity-10 rounded-lg p-4">
               <div className="text-2xl mb-2">🎓</div>
-              <h3 className="text-lg font-semibold text-white mb-2">전문 교육</h3>
-              <p className="text-kaot-green-100">정기적인 세미나 및 워크샵 참여</p>
+              <h3 className="text-lg font-semibold text-white mb-2">교육 정보</h3>
+              <p className="text-kaot-green-100">세미나, 워크샵 등 교육 프로그램</p>
             </div>
             <div className="bg-white bg-opacity-10 rounded-lg p-4">
               <div className="text-2xl mb-2">🤝</div>
               <h3 className="text-lg font-semibold text-white mb-2">네트워크</h3>
-              <p className="text-kaot-green-100">전문가들과의 정보 공유 및 협력</p>
-            </div>
-            <div className="bg-white bg-opacity-10 rounded-lg p-4">
-              <div className="text-2xl mb-2">📚</div>
-              <h3 className="text-lg font-semibold text-white mb-2">자료실</h3>
-              <p className="text-kaot-green-100">최신 연구 자료 및 치료 기법</p>
+              <p className="text-kaot-green-100">전문가들과의 소통 기회</p>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Link href="/join" className="bg-white text-kaot-green-600 hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-colors duration-200 transform hover:scale-105 shadow-lg">
-              회원가입
+            <Link href="/newsletter" className="bg-white text-kaot-green-600 hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-colors duration-200 transform hover:scale-105 shadow-lg flex items-center">
+              <Mail className="mr-2 h-5 w-5" />
+              뉴스레터 구독하기
             </Link>
             <Link href="/community" className="border-2 border-white text-white hover:bg-white hover:text-kaot-green-600 font-medium py-3 px-6 rounded-lg transition-colors duration-200">
               커뮤니티 둘러보기

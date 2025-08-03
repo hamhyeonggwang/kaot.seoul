@@ -59,11 +59,6 @@ export default function Footer() {
                   협력기관
                 </Link>
               </li>
-              <li>
-                <Link href="/join" className="text-gray-300 hover:text-kaot-green-400 transition-colors">
-                  회원가입
-                </Link>
-              </li>
             </ul>
           </div>
 

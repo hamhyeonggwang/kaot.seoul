@@ -173,6 +173,9 @@ export default function DashboardPage() {
           <a href="/admin/members" className="px-4 py-2 bg-white text-kaot-green-600 border border-kaot-green-600 rounded-lg font-medium hover:bg-kaot-green-50">
             회원 관리
           </a>
+          <a href="/admin/newsletter" className="px-4 py-2 bg-white text-kaot-green-600 border border-kaot-green-600 rounded-lg font-medium hover:bg-kaot-green-50">
+            뉴스레터 관리
+          </a>
           <a href="/admin/files" className="px-4 py-2 bg-white text-kaot-green-600 border border-kaot-green-600 rounded-lg font-medium hover:bg-kaot-green-50">
             파일 관리
           </a>
