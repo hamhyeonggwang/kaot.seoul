@@ -71,6 +71,27 @@ export default function AdminPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    // 폼 데이터 유효성 검사
+    if (!formData.title.trim()) {
+      alert('제목을 입력해주세요.')
+      return
+    }
+    
+    if (!formData.content.trim()) {
+      alert('내용을 입력해주세요.')
+      return
+    }
+    
+    if (!formData.date) {
+      alert('날짜를 선택해주세요.')
+      return
+    }
+    
+    if (!formData.author.trim()) {
+      alert('작성자를 입력해주세요.')
+      return
+    }
+    
     try {
       if (editingNews) {
         // 수정
@@ -90,10 +111,12 @@ export default function AdminPage() {
           await fetchNewsData() // 데이터 다시 로드
           alert('지부소식이 성공적으로 수정되었습니다.')
         } else {
-          alert('수정 중 오류가 발생했습니다.')
+          alert(`수정 중 오류가 발생했습니다: ${result.error || result.message}`)
         }
       } else {
         // 새로 추가
+        console.log('제출할 데이터:', formData)
+        
         const response = await fetch('/api/news', {
           method: 'POST',
           headers: {
@@ -102,19 +125,23 @@ export default function AdminPage() {
           body: JSON.stringify(formData)
         })
         
+        console.log('API 응답 상태:', response.status, response.statusText)
+        
         const result = await response.json()
+        console.log('API 응답:', result)
+        
         if (result.success) {
           await fetchNewsData() // 데이터 다시 로드
           alert('지부소식이 성공적으로 추가되었습니다.')
         } else {
-          alert('추가 중 오류가 발생했습니다.')
+          alert(`추가 중 오류가 발생했습니다: ${result.error || result.message}`)
         }
       }
       
       resetForm()
     } catch (error) {
       console.error('API 호출 중 오류:', error)
-      alert('오류가 발생했습니다.')
+      alert(`오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
     }
   }
 
