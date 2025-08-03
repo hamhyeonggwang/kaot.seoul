@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FileText, BookOpen, Download, Info } from 'lucide-react'
+import { FileText, BookOpen, Download, Info, Users, UserCheck } from 'lucide-react'
 
 export default function InfoPage() {
 
