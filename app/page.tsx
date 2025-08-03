@@ -208,7 +208,7 @@ export default function Home() {
                 <span className="font-medium">Band</span>
               </a>
               <a
-                href="mailto:contact@kaot.seoul"
+                href="mailto:kaot.seoul@gmail.com"
                 className="flex items-center text-white hover:text-kaot-green-200 transition-colors duration-200 bg-white bg-opacity-10 rounded-lg px-4 py-2 hover:bg-opacity-20"
               >
                 <Mail className="h-5 w-5 mr-2" />
