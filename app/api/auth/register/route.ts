@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { passwordUtils } from '@/app/utils/password'
 import { emailUtils } from '@/app/utils/email'
 import { authDataUtils } from '@/app/utils/auth-data'
+import { googleAppsScriptService } from '@/app/utils/google-apps-script'
 
 export async function POST(request: NextRequest) {
   try {
@@ -82,7 +83,30 @@ export async function POST(request: NextRequest) {
       createdAt: now
     })
 
+    // Google Sheets에도 회원 데이터 저장
+    try {
+      const googleSheetsData = {
+        name: name,
+        email: email,
+        phone: phone,
+        licenseNumber: licenseNumber,
+        workplace: workplace || '',
+        specialty: specialty || '',
+        membershipType: membershipType,
+        joinDate: now.split('T')[0],
+        status: '대기'
+      }
 
+      const googleSheetsResult = await googleAppsScriptService.addMember(googleSheetsData)
+      
+      if (!googleSheetsResult.success) {
+        console.error('Google Sheets 저장 실패:', googleSheetsResult.error)
+        // Google Sheets 저장 실패해도 로컬 회원가입은 완료
+      }
+    } catch (error) {
+      console.error('Google Sheets 저장 중 오류:', error)
+      // Google Sheets 저장 실패해도 로컬 회원가입은 완료
+    }
 
     return NextResponse.json({ 
       success: true, 

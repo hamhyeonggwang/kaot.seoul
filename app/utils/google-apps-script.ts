@@ -25,7 +25,8 @@ class GoogleAppsScriptService {
   private baseUrl: string
 
   constructor() {
-    this.baseUrl = process.env.GOOGLE_APPS_SCRIPT_URL || ''
+    // Google Apps Script URL (리다이렉트된 URL 사용)
+    this.baseUrl = process.env.GOOGLE_APPS_SCRIPT_URL || 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiNcpuZYUOw13j2In-BIEEnPqGwovD1S1wYbpbUW6dENv6t8W6prSwYsh-816Y2V4tpLI40r5WeMRF3r2Y6Yck6L1mEZL97v85LsZEV1TCu19hAfigLqPfFxtuEqZeP1oG6JX0sSar1FAfiCz1FPXIVEoxFEwpj9xq_0uqzq_N4bPxWTbZxM2YaAM5IaHKK_RD9N93JBhPLfuwZqifW_BgGO-Pmpey7eNwAZjTYhpk7dJubSgWMzYPHWHPEttH_XiwQ9Z5yfxxSJ75UQLmQbBSqZxzWVHOim0EXzU-C&lib=MS_ECmU0b9JFqbab9LLdiqXsWRa1bfi1s'
   }
 
   // 회원 목록 조회
