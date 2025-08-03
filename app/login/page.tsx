@@ -196,18 +196,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Test Account Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-blue-800 mb-2">테스트 계정</h3>
-          <p className="text-xs text-blue-700">
-            <strong>일반 회원:</strong><br />
-            이메일: kim@example.com<br />
-            비밀번호: password123<br /><br />
-            <strong>관리자:</strong><br />
-            이메일: admin@kaot-seoul.or.kr<br />
-            비밀번호: admin123
-          </p>
-        </div>
+
       </div>
     </div>
   )
