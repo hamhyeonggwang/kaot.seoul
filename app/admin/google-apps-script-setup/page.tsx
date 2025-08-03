@@ -110,17 +110,105 @@ function addMember(memberData) {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME)
     
-    memberData['가입일'] = new Date().toISOString().split('T')[0]
-    memberData['상태'] = '대기'
+    // 필드 매핑
+    const mappedData = {
+      'ID': '', // 자동 생성
+      '이름': memberData.name || '',
+      '자격번호': memberData.licenseNumber || '',
+      '이메일': memberData.email || '',
+      '전화번호': memberData.phone || '',
+      '주소': '', // 회원가입에서 수집하지 않음
+      '근무기관': memberData.workplace || '',
+      '직책': '', // 회원가입에서 수집하지 않음
+      '경력': '', // 회원가입에서 수집하지 않음
+      '관심분야': memberData.specialty || '',
+      '가입일': new Date().toISOString().split('T')[0],
+      '상태': '대기',
+      '메모': '회원유형: ' + (memberData.membershipType || '준회원')
+    }
     
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
-    const rowData = headers.map(header => memberData[header] || '')
+    const rowData = headers.map(header => mappedData[header] || '')
     
     sheet.appendRow(rowData)
     
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
       message: '회원이 성공적으로 추가되었습니다.'
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+function updateMember(memberData) {
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME)
+    const data = sheet.getDataRange().getValues()
+    const headers = data[0]
+    
+    // ID로 행 찾기
+    const rowIndex = data.findIndex(row => row[0] == memberData.ID)
+    if (rowIndex === -1) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        error: '회원을 찾을 수 없습니다.'
+      })).setMimeType(ContentService.MimeType.JSON)
+    }
+    
+    // 필드 매핑
+    const mappedData = {
+      'ID': memberData.ID || '',
+      '이름': memberData.name || '',
+      '자격번호': memberData.licenseNumber || '',
+      '이메일': memberData.email || '',
+      '전화번호': memberData.phone || '',
+      '주소': memberData.address || '',
+      '근무기관': memberData.workplace || '',
+      '직책': memberData.position || '',
+      '경력': memberData.experience || '',
+      '관심분야': memberData.specialty || '',
+      '가입일': memberData.joinDate || '',
+      '상태': memberData.status || '대기',
+      '메모': memberData.memo || ''
+    }
+    
+    const rowData = headers.map(header => mappedData[header] || '')
+    sheet.getRange(rowIndex + 1, 1, 1, headers.length).setValues([rowData])
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: '회원 정보가 성공적으로 업데이트되었습니다.'
+    })).setMimeType(ContentService.MimeType.JSON)
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+function deleteMember(memberId) {
+  try {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME)
+    const data = sheet.getDataRange().getValues()
+    
+    const rowIndex = data.findIndex(row => row[0] == memberId)
+    if (rowIndex === -1) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        error: '회원을 찾을 수 없습니다.'
+      })).setMimeType(ContentService.MimeType.JSON)
+    }
+    
+    sheet.deleteRow(rowIndex + 1)
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: '회원이 성공적으로 삭제되었습니다.'
     })).setMimeType(ContentService.MimeType.JSON)
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
