@@ -11,7 +11,6 @@ interface MemberData {
   id?: number
   name: string
   email: string
-  phone: string
   licenseNumber: string
   workplace: string
   specialty: string

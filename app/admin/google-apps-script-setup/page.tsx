@@ -114,17 +114,13 @@ function addMember(memberData) {
     const mappedData = {
       'ID': '', // 자동 생성
       '이름': memberData.name || '',
-      '자격번호': memberData.licenseNumber || '',
       '이메일': memberData.email || '',
-      '전화번호': memberData.phone || '',
-      '주소': '', // 회원가입에서 수집하지 않음
+      '면허번호': memberData.licenseNumber || '',
       '근무기관': memberData.workplace || '',
-      '직책': '', // 회원가입에서 수집하지 않음
-      '경력': '', // 회원가입에서 수집하지 않음
       '관심분야': memberData.specialty || '',
+      '회원유형': memberData.membershipType || '준회원',
       '가입일': new Date().toISOString().split('T')[0],
-      '상태': '대기',
-      '메모': '회원유형: ' + (memberData.membershipType || '준회원')
+      '상태': '대기'
     }
     
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
@@ -163,17 +159,13 @@ function updateMember(memberData) {
     const mappedData = {
       'ID': memberData.ID || '',
       '이름': memberData.name || '',
-      '자격번호': memberData.licenseNumber || '',
       '이메일': memberData.email || '',
-      '전화번호': memberData.phone || '',
-      '주소': memberData.address || '',
+      '면허번호': memberData.licenseNumber || '',
       '근무기관': memberData.workplace || '',
-      '직책': memberData.position || '',
-      '경력': memberData.experience || '',
       '관심분야': memberData.specialty || '',
+      '회원유형': memberData.membershipType || '준회원',
       '가입일': memberData.joinDate || '',
-      '상태': memberData.status || '대기',
-      '메모': memberData.memo || ''
+      '상태': memberData.status || '대기'
     }
     
     const rowData = headers.map(header => mappedData[header] || '')

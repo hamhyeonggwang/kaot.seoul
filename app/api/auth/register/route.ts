@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
       const googleSheetsData = {
         name: name,
         email: email,
-        phone: phone,
         licenseNumber: licenseNumber,
         workplace: workplace || '',
         specialty: specialty || '',
