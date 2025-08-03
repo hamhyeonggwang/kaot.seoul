@@ -45,7 +45,6 @@ export default function Navigation() {
 
   const menuItems = [
     { name: '홈', href: '/' },
-    { name: '지부소개', href: '/about' },
     { name: '지부소식', href: '/news' },
     { name: '커뮤니티', href: '/community' },
     { name: '협력기관', href: '/partners' },
