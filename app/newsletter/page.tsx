@@ -135,7 +135,7 @@ export default function NewsletterPage() {
                 onChange={handleInputChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-kaot-green-500 focus:border-kaot-green-500"
-                placeholder="12345"
+                placeholder="12"
               />
             </div>
 

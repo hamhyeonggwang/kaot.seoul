@@ -54,11 +54,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 면허번호 형식 검증 (숫자만 허용, 4-6자리)
-    const licenseRegex = /^\d{4,6}$/
+    // 면허번호 형식 검증 (숫자만 허용, 2-6자리)
+    const licenseRegex = /^\d{2,6}$/
     if (!licenseRegex.test(licenseNumber)) {
       return NextResponse.json(
-        { message: '면허번호는 4-6자리 숫자만 입력해주세요.' },
+        { message: '면허번호는 2-6자리 숫자만 입력해주세요.' },
         { status: 400 }
       )
     }

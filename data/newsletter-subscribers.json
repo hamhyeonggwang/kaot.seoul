@@ -16,5 +16,14 @@
     "email": "h2g0614@gmail.com",
     "subscribedAt": "2025-08-03T13:26:21.228Z",
     "status": "active"
+  },
+  {
+    "id": "1754228354955",
+    "name": "김테스트",
+    "licenseNumber": "12",
+    "organization": "테스트 병원2",
+    "email": "test2@example.com",
+    "subscribedAt": "2025-08-03T13:39:14.955Z",
+    "status": "active"
   }
 ]
