@@ -18,17 +18,32 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
 
-    // 관리자 인증
-    if (username === 'admin@kaot-seoul.or.kr' && password === 'admin2024') {
-      // 로컬 스토리지에 관리자 세션 저장
-      localStorage.setItem('adminSession', 'true')
-      localStorage.setItem('adminUser', username)
-      router.push('/admin')
-    } else {
-      setError('아이디 또는 비밀번호가 올바르지 않습니다.')
+    try {
+      // 서버 API를 통한 관리자 인증
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password })
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        // 로컬 스토리지에 관리자 세션 저장
+        localStorage.setItem('adminSession', 'true')
+        localStorage.setItem('adminUser', username)
+        router.push('/admin/dashboard')
+      } else {
+        setError(result.message || '아이디 또는 비밀번호가 올바르지 않습니다.')
+      }
+    } catch (error) {
+      console.error('로그인 중 오류:', error)
+      setError('로그인 중 오류가 발생했습니다.')
+    } finally {
+      setLoading(false)
     }
-    
-    setLoading(false)
   }
 
   return (
@@ -111,7 +126,7 @@ export default function AdminLoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              테스트 계정: admin / kaot2024
+              관리자 계정 정보는 시스템 관리자에게 문의하세요
             </p>
           </div>
         </div>
