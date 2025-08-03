@@ -97,9 +97,12 @@ export async function POST(request: NextRequest) {
         status: '대기'
       }
 
+      console.log('Google Sheets에 저장할 데이터:', googleSheetsData)
       const googleSheetsResult = await googleAppsScriptService.addMember(googleSheetsData)
       
-      if (!googleSheetsResult.success) {
+      if (googleSheetsResult.success) {
+        console.log('Google Sheets 저장 성공:', googleSheetsResult.message)
+      } else {
         console.error('Google Sheets 저장 실패:', googleSheetsResult.error)
         // Google Sheets 저장 실패해도 로컬 회원가입은 완료
       }
