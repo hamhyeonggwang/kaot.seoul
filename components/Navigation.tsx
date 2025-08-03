@@ -161,6 +161,15 @@ export default function Navigation() {
                     <User className="h-5 w-5" />
                     <span className="ml-1 text-sm font-medium">로그인</span>
                   </Link>
+                  
+                  {/* Member Registration */}
+                  <Link
+                    href="/join"
+                    className="flex items-center bg-kaot-green-600 text-white px-3 py-2 rounded-md hover:bg-kaot-green-700 transition-colors duration-200"
+                  >
+                    <LogIn className="h-5 w-5" />
+                    <span className="ml-1 text-sm font-medium">회원가입</span>
+                  </Link>
                 </>
               )}
 
@@ -255,16 +264,28 @@ export default function Navigation() {
                   </div>
                 </>
               ) : (
-                <Link
-                  href="/login"
-                  className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <div className="flex items-center">
-                    <User className="h-5 w-5 mr-2" />
-                    <span>로그인</span>
-                  </div>
-                </Link>
+                <>
+                  <Link
+                    href="/login"
+                    className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <div className="flex items-center">
+                      <User className="h-5 w-5 mr-2" />
+                      <span>로그인</span>
+                    </div>
+                  </Link>
+                  <Link
+                    href="/join"
+                    className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <div className="flex items-center">
+                      <LogIn className="h-5 w-5 mr-2" />
+                      <span>회원가입</span>
+                    </div>
+                  </Link>
+                </>
               )}
               
 
