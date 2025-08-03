@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1754227545563",
+    "name": "테스트 사용자",
+    "licenseNumber": "12345",
+    "organization": "테스트 병원",
+    "email": "test@example.com",
+    "subscribedAt": "2025-08-03T13:25:45.563Z",
+    "status": "active"
+  },
+  {
+    "id": "1754227581228",
+    "name": "함형광",
+    "licenseNumber": "8357",
+    "organization": "푸르메재단 넥슨어린이재활병원",
+    "email": "h2g0614@gmail.com",
+    "subscribedAt": "2025-08-03T13:26:21.228Z",
+    "status": "active"
+  }
+]
