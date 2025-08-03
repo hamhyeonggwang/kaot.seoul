@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Menu, X, Instagram, Play, LogIn, User, Settings, LogOut } from 'lucide-react'
+import { Menu, X, LogIn, User, LogOut } from 'lucide-react'
 import { auth } from '@/app/utils/auth'
 
 export default function Navigation() {
@@ -86,36 +86,7 @@ export default function Navigation() {
 
           {/* Social Links & Login & Mobile menu button */}
           <div className="flex items-center space-x-4">
-            {/* Social Links */}
-            <div className="hidden md:flex items-center space-x-3">
-              <a
-                href="https://www.youtube.com/@kaot-ot-ati"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
-              >
-                <Play className="h-5 w-5" />
-                <span className="ml-1 text-sm font-medium">YouTube</span>
-              </a>
-              <a
-                href="https://www.instagram.com/kaot.seoul"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
-              >
-                <Instagram className="h-5 w-5" />
-                <span className="ml-1 text-sm font-medium">@kaot.seoul</span>
-              </a>
-              <a
-                href="https://www.band.us/band/82793225/invite"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-gray-700 hover:text-kaot-green-600 transition-colors duration-200"
-              >
-                <span className="text-lg mr-1">🎵</span>
-                <span className="ml-1 text-sm font-medium">Band</span>
-              </a>
-            </div>
+
 
             {/* Login/User Buttons */}
             <div className="hidden md:flex items-center space-x-3">
@@ -203,65 +174,25 @@ export default function Navigation() {
                 {item.name}
               </Link>
             ))}
-            {/* Social Links in Mobile Menu */}
+            {/* Login/User in Mobile Menu */}
             <div className="border-t border-gray-200 pt-2 mt-2">
-              <a
-                href="https://www.youtube.com/@kaot-ot-ati"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center">
-                  <Play className="h-5 w-5 mr-2" />
-                  <span>YouTube</span>
-                </div>
-              </a>
-              <a
-                href="https://www.instagram.com/kaot.seoul"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center">
-                  <Instagram className="h-5 w-5 mr-2" />
-                  <span>@kaot.seoul</span>
-                </div>
-              </a>
-              <a
-                href="https://www.band.us/band/82793225/invite"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="flex items-center">
-                  <span className="text-lg mr-2">🎵</span>
-                  <span>Band</span>
-                </div>
-              </a>
-              
-              {/* Login/User in Mobile Menu */}
               {isLoggedIn ? (
                 <>
-                  <div className="border-t border-gray-200 pt-2 mt-2">
-                    <div className="px-3 py-2 text-xs text-gray-500">
-                      {user?.email}
-                    </div>
-                    <button
-                      onClick={() => {
-                        handleLogout()
-                        setIsMenuOpen(false)
-                      }}
-                      className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 w-full text-left"
-                    >
-                      <div className="flex items-center">
-                        <LogOut className="h-5 w-5 mr-2" />
-                        <span>로그아웃</span>
-                      </div>
-                    </button>
+                  <div className="px-3 py-2 text-xs text-gray-500">
+                    {user?.email}
                   </div>
+                  <button
+                    onClick={() => {
+                      handleLogout()
+                      setIsMenuOpen(false)
+                    }}
+                    className="text-gray-700 hover:text-kaot-green-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 w-full text-left"
+                  >
+                    <div className="flex items-center">
+                      <LogOut className="h-5 w-5 mr-2" />
+                      <span>로그아웃</span>
+                    </div>
+                  </button>
                 </>
               ) : (
                 <>
@@ -287,8 +218,6 @@ export default function Navigation() {
                   </Link>
                 </>
               )}
-              
-
             </div>
           </div>
         </div>
