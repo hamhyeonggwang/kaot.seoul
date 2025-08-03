@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 사용자 찾기
-    const user = authDataUtils.findUserByEmail(email)
+    const user = await authDataUtils.findUserByEmail(email)
     if (!user) {
       return NextResponse.json({ 
         success: false, 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 마지막 로그인 시간 업데이트
-    authDataUtils.updateUser(user.id, { lastLogin: new Date().toISOString() })
+    await authDataUtils.updateUser(user.id, { lastLogin: new Date().toISOString() })
 
     // 로그인 성공 시 반환할 사용자 정보 (비밀번호 제외)
     const userInfo = {

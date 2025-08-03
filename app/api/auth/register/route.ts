@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 이메일 중복 확인
-    const existingUser = authDataUtils.findUserByEmail(email)
+    const existingUser = await authDataUtils.findUserByEmail(email)
     if (existingUser) {
       return NextResponse.json({ 
         success: false, 
@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 면허번호 중복 확인
-    const existingLicense = authDataUtils.getAllUsers().find(user => user.licenseNumber === licenseNumber)
+    const allUsers = await authDataUtils.getAllUsers()
+    const existingLicense = allUsers.find(user => user.licenseNumber === licenseNumber)
     if (existingLicense) {
       return NextResponse.json({ 
         success: false, 
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
     // 새 사용자 생성
     const now = new Date().toISOString()
     
-    const newUser = authDataUtils.addUser({
+    const newUser = await authDataUtils.addUser({
       email,
       password: hashedPassword,
       name,
