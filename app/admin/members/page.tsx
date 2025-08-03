@@ -86,20 +86,16 @@ export default function MembersPage() {
     try {
       setLoading(true)
       
-      if (googleAppsScriptStatus.connected) {
-        // Google Apps Script에서 데이터 가져오기
-        const response = await fetch('/api/members')
-        const result = await response.json()
-        
-        if (result.success) {
-          setMembers(result.data || [])
-        } else {
-          console.error('회원 데이터 로드 실패:', result.error)
-          // 실패 시 더미 데이터 사용
-          setMembers(getDummyMembers())
-        }
+      // 항상 API에서 데이터 가져오기 (로컬 + Google 데이터)
+      const response = await fetch('/api/members')
+      const result = await response.json()
+      
+      if (result.success) {
+        setMembers(result.data || [])
+        console.log('회원 데이터 로드 성공:', result.data)
       } else {
-        // Google Apps Script 연결이 안 된 경우 더미 데이터 사용
+        console.error('회원 데이터 로드 실패:', result.error)
+        // 실패 시 더미 데이터 사용
         setMembers(getDummyMembers())
       }
     } catch (error) {

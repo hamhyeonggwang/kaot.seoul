@@ -18,8 +18,8 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
 
-    // 간단한 인증 (실제로는 서버에서 처리해야 함)
-    if (username === 'admin' && password === 'kaot2024') {
+    // 관리자 인증
+    if (username === 'admin@kaot-seoul.or.kr' && password === 'admin2024') {
       // 로컬 스토리지에 관리자 세션 저장
       localStorage.setItem('adminSession', 'true')
       localStorage.setItem('adminUser', username)
