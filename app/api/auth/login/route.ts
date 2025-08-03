@@ -1,60 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { passwordUtils } from '@/app/utils/password'
-
-// 실제로는 데이터베이스에서 관리해야 하지만, 여기서는 메모리 기반으로 구현
-let usersData = [
-  {
-    id: 1,
-    email: 'kim@example.com',
-    password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqKqKq', // hashed_password123
-    name: '김작업',
-    phone: '010-1234-5678',
-    licenseNumber: 'OT-2024-001',
-    workplace: '서울대학교병원',
-    specialty: '소아작업치료',
-    membershipType: '정회원',
-    joinDate: '2024-01-15',
-    status: 'active',
-    emailVerified: true,
-    createdAt: '2024-01-15T10:00:00Z',
-    lastLogin: '2025-01-20T10:30:00Z',
-    role: 'member'
-  },
-  {
-    id: 2,
-    email: 'lee@example.com',
-    password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqKqKq', // hashed_password456
-    name: '이치료',
-    phone: '010-2345-6789',
-    licenseNumber: 'OT-2024-002',
-    workplace: '삼성서울병원',
-    specialty: '성인재활',
-    membershipType: '정회원',
-    joinDate: '2024-02-20',
-    status: 'active',
-    emailVerified: true,
-    createdAt: '2024-02-20T14:30:00Z',
-    lastLogin: '2025-01-19T16:45:00Z',
-    role: 'member'
-  },
-  {
-    id: 3,
-    email: 'admin@kaot-seoul.or.kr',
-    password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqKqKq', // hashed_admin123
-    name: '관리자',
-    phone: '010-0000-0000',
-    licenseNumber: 'OT-ADMIN-001',
-    workplace: '대한작업치료사협회 서울지부',
-    specialty: '관리',
-    membershipType: '관리자',
-    joinDate: '2024-01-01',
-    status: 'active',
-    emailVerified: true,
-    createdAt: '2024-01-01T00:00:00Z',
-    lastLogin: '2025-01-20T10:30:00Z',
-    role: 'admin'
-  }
-]
+import { authDataUtils } from '@/app/utils/auth-data'
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 사용자 찾기
-    const user = usersData.find(u => u.email === email)
+    const user = authDataUtils.findUserByEmail(email)
     if (!user) {
       return NextResponse.json({ 
         success: false, 
@@ -104,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 마지막 로그인 시간 업데이트
-    user.lastLogin = new Date().toISOString()
+    authDataUtils.updateUser(user.id, { lastLogin: new Date().toISOString() })
 
     // 로그인 성공 시 반환할 사용자 정보 (비밀번호 제외)
     const userInfo = {

@@ -1,40 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { passwordUtils } from '@/app/utils/password'
 import { emailUtils } from '@/app/utils/email'
-
-// 실제로는 데이터베이스에서 관리해야 하지만, 여기서는 메모리 기반으로 구현
-let usersData = [
-  {
-    id: 1,
-    email: 'kim@example.com',
-    password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqKqKq', // hashed_password123
-    name: '김작업',
-    phone: '010-1234-5678',
-    licenseNumber: 'OT-2024-001',
-    workplace: '서울대학교병원',
-    specialty: '소아작업치료',
-    membershipType: '정회원',
-    joinDate: '2024-01-15',
-    status: 'active',
-    emailVerified: true,
-    createdAt: '2024-01-15T10:00:00Z'
-  },
-  {
-    id: 2,
-    email: 'lee@example.com',
-    password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/5QqKqKq', // hashed_password456
-    name: '이치료',
-    phone: '010-2345-6789',
-    licenseNumber: 'OT-2024-002',
-    workplace: '삼성서울병원',
-    specialty: '성인재활',
-    membershipType: '정회원',
-    joinDate: '2024-02-20',
-    status: 'active',
-    emailVerified: true,
-    createdAt: '2024-02-20T14:30:00Z'
-  }
-]
+import { authDataUtils } from '@/app/utils/auth-data'
 
 export async function POST(request: NextRequest) {
   try {
@@ -77,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 이메일 중복 확인
-    const existingUser = usersData.find(user => user.email === email)
+    const existingUser = authDataUtils.findUserByEmail(email)
     if (existingUser) {
       return NextResponse.json({ 
         success: false, 
@@ -86,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 면허번호 중복 확인
-    const existingLicense = usersData.find(user => user.licenseNumber === licenseNumber)
+    const existingLicense = authDataUtils.getAllUsers().find(user => user.licenseNumber === licenseNumber)
     if (existingLicense) {
       return NextResponse.json({ 
         success: false, 
@@ -98,11 +65,9 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await passwordUtils.hashPassword(password)
 
     // 새 사용자 생성
-    const newId = Math.max(...usersData.map(user => user.id)) + 1
     const now = new Date().toISOString()
     
-    const newUser = {
-      id: newId,
+    const newUser = authDataUtils.addUser({
       email,
       password: hashedPassword,
       name,
@@ -115,9 +80,7 @@ export async function POST(request: NextRequest) {
       status: 'active',
       emailVerified: false, // 이메일 인증 필요
       createdAt: now
-    }
-
-    usersData.push(newUser)
+    })
 
     // 이메일 인증 토큰 생성 및 저장
     const verificationToken = emailUtils.generateVerificationToken()
