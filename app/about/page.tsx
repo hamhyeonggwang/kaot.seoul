@@ -59,6 +59,7 @@ export default function AboutPage() {
           </div>
           
           <div className="bg-white rounded-lg shadow-lg p-8">
+            {/* 지회장 */}
             <div className="text-center mb-8">
               <div className="inline-block bg-kaot-green-600 text-white px-6 py-3 rounded-lg">
                 <h3 className="text-xl font-bold">지회장</h3>
@@ -66,43 +67,60 @@ export default function AboutPage() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div className="text-center">
-                <div className="bg-kaot-green-100 p-4 rounded-lg">
-                  <Users className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900">부지회장</h4>
-                </div>
+            {/* 연결선 */}
+            <div className="flex justify-center mb-8">
+              <div className="w-1 h-8 bg-kaot-green-600"></div>
+            </div>
+            
+            {/* 부지회장 */}
+            <div className="text-center mb-8">
+              <div className="inline-block bg-kaot-green-500 text-white px-6 py-3 rounded-lg">
+                <h3 className="text-lg font-bold">부지회장</h3>
               </div>
-              <div className="text-center">
-                <div className="bg-kaot-green-100 p-4 rounded-lg">
+            </div>
+            
+            {/* 연결선 */}
+            <div className="flex justify-center mb-8">
+              <div className="w-1 h-8 bg-kaot-green-600"></div>
+            </div>
+            
+            {/* 이사들 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="text-center relative">
+                {/* 연결선 */}
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-kaot-green-400"></div>
+                <div className="bg-kaot-green-100 p-4 rounded-lg mt-4">
                   <Users className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
                   <h4 className="font-semibold text-gray-900">총무</h4>
                 </div>
               </div>
-              <div className="text-center">
-                <div className="bg-kaot-green-100 p-4 rounded-lg">
+              <div className="text-center relative">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-kaot-green-400"></div>
+                <div className="bg-kaot-green-100 p-4 rounded-lg mt-4">
                   <Users className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
                   <h4 className="font-semibold text-gray-900">재무</h4>
                 </div>
               </div>
-              <div className="text-center">
-                <div className="bg-kaot-green-100 p-4 rounded-lg">
+              <div className="text-center relative">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-kaot-green-400"></div>
+                <div className="bg-kaot-green-100 p-4 rounded-lg mt-4">
                   <Users className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
                   <h4 className="font-semibold text-gray-900">교육</h4>
                 </div>
               </div>
-              <div className="text-center">
-                <div className="bg-kaot-green-100 p-4 rounded-lg">
+              <div className="text-center relative">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-kaot-green-400"></div>
+                <div className="bg-kaot-green-100 p-4 rounded-lg mt-4">
                   <Users className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
                   <h4 className="font-semibold text-gray-900">홍보</h4>
                 </div>
               </div>
-            </div>
-            
-            <div className="mt-6 text-center">
-              <div className="inline-block bg-kaot-green-100 p-4 rounded-lg">
-                <Users className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
-                <h4 className="font-semibold text-gray-900">협력</h4>
+              <div className="text-center relative">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-kaot-green-400"></div>
+                <div className="bg-kaot-green-100 p-4 rounded-lg mt-4">
+                  <Users className="h-8 w-8 text-kaot-green-600 mx-auto mb-2" />
+                  <h4 className="font-semibold text-gray-900">협력</h4>
+                </div>
               </div>
             </div>
           </div>
